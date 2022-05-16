@@ -9,10 +9,7 @@
 #define __GRAPHICS_H__
 
 #include "stdlib.h"
-#include "stdint.h"
-
-typedef unsigned int uint;
-typedef uint16_t u16;
+#include "common.h"
 
 /**
  * @brief Draw a pixel.
