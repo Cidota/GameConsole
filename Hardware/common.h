@@ -1,5 +1,5 @@
 /**
- * @file application.h
+ * @file common.h
  * @brief Common constants, functions and typedefs.
  * @details See @ref index for further details.
  * @copyright Cidota. All rights reserved, 2022.

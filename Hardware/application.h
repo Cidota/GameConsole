@@ -14,14 +14,14 @@
 void init();
 
 /**
- * @brief Updates the application. Will be called at a fixed interval.
+ * @brief Updates the application.
  * @details This function is used to update the application state.
  **/
 void update();
 
 /**
- * @brief Draw the application to the main output. Will be called at a fixed interval.
+ * @brief Draw the application to the main output.
  **/
-void draw();
+void render();
 
 #endif // __APP_H__

@@ -32,7 +32,7 @@ void drawPixel(uint x, uint y, u16 color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawRectangle(uint x, uint y, uint height, uint width, uint16_t color);
+void drawRectangle(uint x, uint y, uint height, uint width, u16 color);
 
 /**
  * @brief Draw a horizontal line.
@@ -44,7 +44,7 @@ void drawRectangle(uint x, uint y, uint height, uint width, uint16_t color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawHorizontalLine(uint x, uint y, uint length, uint16_t color);
+void drawHorizontalLine(uint x, uint y, uint length, u16 color);
 
 /**
  * @brief Draw a vertical line.
@@ -56,7 +56,7 @@ void drawHorizontalLine(uint x, uint y, uint length, uint16_t color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawVerticalLine(uint x, uint y, uint length, uint16_t color);
+void drawVerticalLine(uint x, uint y, uint length, u16 color);
 
 /**
  * @brief Draw a bitmap image.
@@ -69,6 +69,6 @@ void drawVerticalLine(uint x, uint y, uint length, uint16_t color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawBitmap(uint x, uint y, uint height, uint width, uint16_t bitmap[]);
+void drawBitmap(uint x, uint y, uint height, uint width, u16 bitmap[]);
 
 #endif // __GRAPHICS_H__
