@@ -12,6 +12,18 @@
 #include "common.h"
 
 /**
+ * @brief Get the screen height.
+ * @return the height of the screen
+ **/
+uint getScreenHeight();
+
+/**
+ * @brief Get the screen width.
+ * @return the width of the screen
+ **/
+uint getScreenWidth();
+
+/**
  * @brief Draw a pixel.
  * @param x the x-coordinate of the pixel
  * @param y the x-coordinate of the pixel
