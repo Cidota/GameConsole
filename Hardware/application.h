@@ -24,4 +24,9 @@ void update();
  **/
 void render();
 
+/**
+ * @brief Clean up used resources. Will be called each time the application closes.
+ */
+void cleanup();
+
 #endif // __APP_H__
