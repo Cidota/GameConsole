@@ -99,7 +99,7 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		uint8_t *ch = "Hello world\n\r";
+		uint8_t *ch = (uint8_t*)"Hello world\n\r";
 		for (size_t i = 0; i < strlen("Hello world\n\r"); i++) {
 			LL_USART_TransmitData8(USART2, *ch++);
 			while (!LL_USART_IsActiveFlag_TXE(USART2))
