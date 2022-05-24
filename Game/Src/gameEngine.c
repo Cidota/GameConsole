@@ -29,6 +29,7 @@ void init() {
 
 void init_game(games game) {
 	currentGame = game;
+	renderOthers = true;
 	if (currentGame == NONE) {
 		printf("GameEngine couldn't find any game to update.\n");
 		exit(1);
@@ -54,13 +55,9 @@ void init_game(games game) {
 	case SNAKE_GAME:
 		init_snake_game(9, 9);
 		// init the game graphical environment, should be moved
-		drawRectangle(0, 0, 160, 320, BLACK);
-		drawRectangle(480 - 14, 0, 14, 320, BLACK);
-		drawRectangle(160, 320 - 14, 480 - 160, 14, BLACK);
 		break;
 	default:
-		for (int i = 0; i < 10; i++)
-			printf("Couldn't initialize any game.\n");
+		printf("Couldn't initialize any game.\n");
 		exit(1);
 		break;
 	}
@@ -96,7 +93,18 @@ void update() {
 }
 
 
-void draw() {
+void draw(){
+	if (renderOthers){
+		switch (currentGame) {
+		case SNAKE_GAME:
+			render_snake_UI();
+			render_snake_Background();
+			break;
+		default:
+			break;
+		}
+		renderOthers = false;
+	}
 	if (screen_updates != NULL && screenUpdatesIndex != 0) {
 		for (int i = 0; i < screenUpdatesIndex; i++) {
 			drawRectangle(

@@ -127,12 +127,7 @@ void destroy_snake_game() {
 	exit(0);
 }
 
-void reset_snake_game() {
-	printf("***\nGame over.\n***\n");
-	printf(". S . .\n*** Reseting Snake Game***\n");
-	// temp indicator that game is over
-	drawRectangle(0, 0, 160, 320, RED);
-	// Reset all the values. This function consider that map_size is well defined.
+void init_snake_variables(){
 	isGameRunning = false;
 	snake_head->x = map_size->x / 2;
 	snake_head->y = map_size->y / 2;
@@ -142,14 +137,40 @@ void reset_snake_game() {
 		map[i]->type = VOID;
 		map[i]->direction = NO_DIRECTION;
 	}
+	map[getIndex(snake_head)]->type = SNAKE;
+	map[getIndex(snake_head)]->direction = NO_DIRECTION;
+	availablePositions = map_size->x * map_size->y - 1;
+}
+
+void reset_snake_game() {
+	logDebug("***Game over.***\n");
+	logDebug("*** Reseting Snake Game***\n");
+	isGameRunning = false;
+	// temp indicator that game is over
+	drawRectangle(0, 0, 160, 320, RED);
+	// Reset all the values. This function consider that map_size is well defined.
+	 init_snake_variables();
+
+	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
+}
+
+void init_render(){
 	// TODO: Find an implementation to call renderUI and renderBackGround from here.
 	// Temp : redraw the entire map in blank.
-	drawRectangle(
-		offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
-	availablePositions = map_size->x * map_size->y - 1;
 	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 			tailleCaseTemp, ORANGE);
 	generateApple();
+}
+
+void render_snake_UI(){
+	drawRectangle(0, 0, 160, 320, BLACK);
+	drawRectangle(480 - 14, 0, 14, 320, BLACK);
+	drawRectangle(160, 320 - 14, 480 - 160, 14, BLACK);
+}
+
+void render_snake_Background(){
+	drawRectangle(
+		offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
 }
 
 void init_snake_game(int x, int y) {
@@ -163,8 +184,6 @@ void init_snake_game(int x, int y) {
 		logError("Memory limit exceeded.\n");
 		destroy_snake_game();
 	}
-	map_size->x = x;
-	map_size->y = y;
 	map = malloc(sizeof(struct snake_case*) * map_size->x * map_size->y);
 	if (map == NULL) {
 		logError("Memory limit exceeded.\n");
@@ -176,27 +195,24 @@ void init_snake_game(int x, int y) {
 			logError("Memory limit exceeded.\n");
 			destroy_snake_game();
 		}
-		map[i]->type = VOID;
-		map[i]->direction = NO_DIRECTION;
-	}
+	}	
+	map_size->x = x;
+	map_size->y = y;
 	srand(LL_RNG_ReadRandData32(RNG));
-	snake_head->x = map_size->x / 2;
-	snake_head->y = map_size->y / 2;
-	snake_tail->x = snake_head->x;
-	snake_tail->y = snake_head->y;
-	map[getIndex(snake_head)]->direction = NO_DIRECTION;
-	map[getIndex(snake_head)]->type = SNAKE;
-	availablePositions = map_size->x * map_size->y - 1;
 	lastDir = RIGHT;
-	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-			tailleCaseTemp, ORANGE);
-	generateApple();
+	init_snake_variables();
+	init_render();
 }
 
 void update_snake_game() {
 	// "Press a button to start" part.
 	if (!isGameRunning){
 		if (getCurrentDirection() == NO_DIRECTION){
+			return;
+		}
+		else{
+			renderOthers=true;
+			isGameRunning = true;
 			return;
 		}
 	}

@@ -16,6 +16,7 @@
 #include <string.h>
 
 #define offset 160
+static bool renderOthers = true;
 
 typedef enum games
 {
