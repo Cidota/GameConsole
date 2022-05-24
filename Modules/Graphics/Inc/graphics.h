@@ -8,8 +8,11 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
-#include "stdlib.h"
+#include <string.h>
+#include "image.h"
 #include "common.h"
+#include "lcd.h"
+
 
 /**
  * @brief Get the screen height.
@@ -31,7 +34,7 @@ uint getScreenWidth();
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawPixel(uint x, uint y, u16 color);
+// void drawPixel(uint x, uint y, u16 color);
 
 /**
  * @brief Draw a rectangle.
@@ -56,7 +59,7 @@ void drawRectangle(uint x, uint y, uint height, uint width, u16 color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawHorizontalLine(uint x, uint y, uint length, u16 color);
+// void drawHorizontalLine(uint x, uint y, uint length, u16 color);
 
 /**
  * @brief Draw a vertical line.
@@ -68,7 +71,7 @@ void drawHorizontalLine(uint x, uint y, uint length, u16 color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawVerticalLine(uint x, uint y, uint length, u16 color);
+// void drawVerticalLine(uint x, uint y, uint length, u16 color);
 
 /**
  * @brief Draw a bitmap image.
@@ -81,6 +84,6 @@ void drawVerticalLine(uint x, uint y, uint length, u16 color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawBitmap(uint x, uint y, uint height, uint width, u16 bitmap[]);
+// void drawBitmap(uint x, uint y, uint height, uint width, u16 bitmap[]);
 
 #endif // __GRAPHICS_H__
