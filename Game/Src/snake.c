@@ -33,6 +33,7 @@ void generateApple() {
 	}
 	if (availablePositions < 0) {
 		reset_snake_game();
+		return;
 	}
 	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions))
 			+ 1;
@@ -133,7 +134,6 @@ void reset_snake_game() {
 	drawRectangle(0, 0, 160, 320, RED);
 	// Reset all the values. This function consider that map_size is well defined.
 	isGameRunning = false;
-	srand(LL_RNG_ReadRandData32(RNG));
 	snake_head->x = map_size->x / 2;
 	snake_head->y = map_size->y / 2;
 	snake_tail->x = snake_head->x;
@@ -141,13 +141,11 @@ void reset_snake_game() {
 	for (int i = 0; i < map_size->x * map_size->y; i++) {
 		map[i]->type = VOID;
 		map[i]->direction = NO_DIRECTION;
-		// TODO: Find an implementation to call renderUI and renderBackGround from here.
-		// Temp : redraw the entire map in blank.
-		drawRectangle(
-			offset + i % map_size->x * tailleCaseTemp,
-			tailleCaseTemp * i / map_size->x,
-			tailleCaseTemp, tailleCaseTemp, WHITE);
 	}
+	// TODO: Find an implementation to call renderUI and renderBackGround from here.
+	// Temp : redraw the entire map in blank.
+	drawRectangle(
+		offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
 	availablePositions = map_size->x * map_size->y - 1;
 	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 			tailleCaseTemp, ORANGE);
@@ -218,6 +216,7 @@ void update_snake_game() {
 			|| (map[indexNextPos]->type == SNAKE
 					&& indexNextPos != getIndex(snake_tail))) {
 		reset_snake_game();
+		return;
 	}
 	if (map[indexNextPos]->type == VOID || map[indexNextPos]->type == SNAKE) {
 		int indexSnakeTail = getIndex(snake_tail);
