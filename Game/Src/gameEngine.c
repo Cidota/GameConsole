@@ -87,7 +87,7 @@ void update() {
 	resetSpriteUpdate();
 	switch (currentGame) {
 	case SNAKE_GAME:
-		if (getDeltaTime(1000))
+		if (getDeltaTime(500))
 			update_snake_game(screen_updates);
 		break;
 	default:

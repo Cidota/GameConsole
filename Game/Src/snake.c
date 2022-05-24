@@ -146,7 +146,7 @@ void reset_snake_game() {
 		drawRectangle(
 			offset + i % map_size->x * tailleCaseTemp,
 			tailleCaseTemp * i / map_size->x,
-			i % map_size->x, i / map_size->x, WHITE);
+			tailleCaseTemp, tailleCaseTemp, WHITE);
 	}
 	availablePositions = map_size->x * map_size->y - 1;
 	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
@@ -198,7 +198,7 @@ void init_snake_game(int x, int y) {
 void update_snake_game() {
 	// "Press a button to start" part.
 	if (!isGameRunning){
-		if (getCurrentDirection() == NONE){
+		if (getCurrentDirection() == NO_DIRECTION){
 			return;
 		}
 	}
