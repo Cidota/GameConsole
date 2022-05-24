@@ -5,13 +5,6 @@ games currentGame = NONE;
 static int screenUpdatesIndex = 0;
 
 void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite) {
-	// temp fix for green shit trail bug fix
-	for (int i = 0; i < screenUpdatesIndex; i++) {
-		if (screen_updates->sprites[i].position.x == posX
-				&& screen_updates->sprites[i].position.y == posY) {
-			return;
-		}
-	}
 	screen_updates->sprites[screenUpdatesIndex].position.x = posX;
 	screen_updates->sprites[screenUpdatesIndex].position.y = posY;
 	screen_updates->sprites[screenUpdatesIndex].size.x = sizeX;

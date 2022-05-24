@@ -20,8 +20,8 @@ directions getReverseDirection(directions d) {
 		return RIGHT;
 	case RIGHT:
 		return LEFT;
-	case NO_DIRECTION:
-		return NONE;
+	default:
+		return NO_DIRECTION;
 	}
 }
 
@@ -214,8 +214,10 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, GREEN);
+		if (!(next_positionx == snake_tail->x && next_position->y == snake_tail->y)){
+			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
+					tailleCaseTemp, GREEN);
+		}
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
