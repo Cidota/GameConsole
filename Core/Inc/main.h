@@ -36,6 +36,7 @@ extern "C" {
 #include "stm32l4xx_ll_utils.h"
 #include "stm32l4xx_ll_pwr.h"
 #include "stm32l4xx_ll_dma.h"
+#include "stm32l4xx_ll_rng.h"
 #include "stm32l4xx_ll_usart.h"
 #include "stm32l4xx_ll_gpio.h"
 
@@ -73,6 +74,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B0_Pin LL_GPIO_PIN_13
 #define B0_GPIO_Port GPIOC
+#define B0_EXTI_IRQn EXTI15_10_IRQn
 #define LCD_RST_A4_Pin LL_GPIO_PIN_1
 #define LCD_RST_A4_GPIO_Port GPIOC
 #define LCD_RD_A0_Pin LL_GPIO_PIN_0
@@ -87,22 +89,28 @@ void Error_Handler(void);
 #define LCD_RS_A2_GPIO_Port GPIOA
 #define B3_Pin LL_GPIO_PIN_5
 #define B3_GPIO_Port GPIOC
+#define B3_EXTI_IRQn EXTI9_5_IRQn
 #define LCD_CS_A3_Pin LL_GPIO_PIN_0
 #define LCD_CS_A3_GPIO_Port GPIOB
 #define B7_Pin LL_GPIO_PIN_1
 #define B7_GPIO_Port GPIOB
+#define B7_EXTI_IRQn EXTI1_IRQn
 #define B8_Pin LL_GPIO_PIN_2
 #define B8_GPIO_Port GPIOB
+#define B8_EXTI_IRQn EXTI2_IRQn
 #define LCD_D6_D6_Pin LL_GPIO_PIN_10
 #define LCD_D6_D6_GPIO_Port GPIOB
 #define B2_Pin LL_GPIO_PIN_6
 #define B2_GPIO_Port GPIOC
+#define B2_EXTI_IRQn EXTI9_5_IRQn
 #define LCD_D1_D9_Pin LL_GPIO_PIN_7
 #define LCD_D1_D9_GPIO_Port GPIOC
 #define B1_Pin LL_GPIO_PIN_8
 #define B1_GPIO_Port GPIOC
+#define B1_EXTI_IRQn EXTI9_5_IRQn
 #define B6_Pin LL_GPIO_PIN_9
 #define B6_GPIO_Port GPIOC
+#define B6_EXTI_IRQn EXTI9_5_IRQn
 #define LCD_D7_D7_Pin LL_GPIO_PIN_8
 #define LCD_D7_D7_GPIO_Port GPIOA
 #define LDC_D0_D8_Pin LL_GPIO_PIN_9
@@ -111,8 +119,10 @@ void Error_Handler(void);
 #define LCD_D2_D2_GPIO_Port GPIOA
 #define B5_Pin LL_GPIO_PIN_11
 #define B5_GPIO_Port GPIOA
+#define B5_EXTI_IRQn EXTI15_10_IRQn
 #define B4_Pin LL_GPIO_PIN_12
 #define B4_GPIO_Port GPIOA
+#define B4_EXTI_IRQn EXTI15_10_IRQn
 #define TMS_Pin LL_GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin LL_GPIO_PIN_14
