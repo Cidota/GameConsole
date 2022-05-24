@@ -20,8 +20,8 @@ directions getReverseDirection(directions d) {
 		return RIGHT;
 	case RIGHT:
 		return LEFT;
-	case NO_DIRECTION:
-		return NONE;
+	default:
+		return NO_DIRECTION;
 	}
 }
 
@@ -36,7 +36,6 @@ void generateApple() {
 	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions))
 			+ 1;
 	unsigned int cpt = 0;
-	bool hasBeenSet = false;
 	for (int i = 0; i < map_size->x * map_size->y; i++) {
 		if (map[i]->type == VOID) {
 			cpt++;
@@ -46,7 +45,6 @@ void generateApple() {
 					tailleCaseTemp, RED);
 			map[i]->type = APPLE;
 			map[i]->direction = NO_DIRECTION;
-			hasBeenSet = true;
 
 			break;
 		}
@@ -214,8 +212,12 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, GREEN);
+		// If the snake is size = 1, the previous position of the head should not be set as green.
+		// Otherwise the previous position of the head set as red should now be green.
+		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
+			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
+					tailleCaseTemp, GREEN);
+		}
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
