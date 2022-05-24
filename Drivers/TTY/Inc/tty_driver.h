@@ -9,15 +9,25 @@
 #define TTY_INC_TTY_DRIVER_H_
 
 #include "common.h"
+
+#include "stm32l4xx_ll_usart.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include "stm32l4xx_ll_usart.h"
 
+/**
+ * @brief Opens the driver for use.
+ **/
 void tty_open();
+
+/**
+ * @brief Writes a character to the buffer.
+ * @param c the character to write to the buffer
+ **/
 void tty_write(char c);
 
 #endif /* TTY_INC_TTY_DRIVER_H_ */

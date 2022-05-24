@@ -13,23 +13,20 @@
 
 bool log_active = true;
 
-void toggleLog(void)
-{
+void toggleLog(void) {
 	log_active = log_active ? false : true;
 }
 
-bool getLogActive(void)
-{
-    return log_active;
+bool getLogActive(void) {
+	return log_active;
 }
 
-void log_printf(const char *format, ...)
-{
-    va_list args;
-    u32 ms = getTimeMs();
+void log_printf(const char *format, ...) {
+	va_list args;
+	u32 ms = getTimeMs();
 
-    printf("%lu.%03lu ", ms / 1000U, ms % 1000U);
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
+	printf("%lu.%03lu ", ms / 1000U, ms % 1000U);
+	va_start(args, format);
+	vprintf(format, args);
+	va_end(args);
 }
