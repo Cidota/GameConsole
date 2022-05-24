@@ -212,6 +212,8 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
+		// If the snake is size = 1, the previous position of the head should not be set as green.
+		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
 			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 					tailleCaseTemp, GREEN);
