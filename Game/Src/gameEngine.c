@@ -95,7 +95,6 @@ void update() {
 	}
 }
 
-#define offset 160
 
 void draw() {
 	if (screen_updates != NULL && screenUpdatesIndex != 0) {

@@ -7,12 +7,15 @@
 #include "graphics.h"
 #include "time.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
 #include <string.h>
+
+#define offset 160
 
 typedef enum games
 {

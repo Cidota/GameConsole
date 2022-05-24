@@ -9,6 +9,7 @@ struct coordinate *map_size;
 struct snake_case **map;
 directions lastDir;
 int availablePositions = -1;
+bool isGameRunning = false;
 
 directions getReverseDirection(directions d) {
 	switch (d) {
@@ -130,7 +131,27 @@ void reset_snake_game() {
 	printf(". S . .\n*** Reseting Snake Game***\n");
 	// temp indicator that game is over
 	drawRectangle(0, 0, 160, 320, RED);
-	exit(1);
+	// Reset all the values. This function consider that map_size is well defined.
+	isGameRunning = false;
+	srand(LL_RNG_ReadRandData32(RNG));
+	snake_head->x = map_size->x / 2;
+	snake_head->y = map_size->y / 2;
+	snake_tail->x = snake_head->x;
+	snake_tail->y = snake_head->y;
+	for (int i = 0; i < map_size->x * map_size->y; i++) {
+		map[i]->type = VOID;
+		map[i]->direction = NO_DIRECTION;
+		// TODO: Find an implementation to call renderUI and renderBackGround from here.
+		// Temp : redraw the entire map in blank.
+		drawRectangle(
+			offset + i % map_size->x * tailleCaseTemp,
+			tailleCaseTemp * i / map_size->x,
+			i % map_size->x, i / map_size->x, WHITE);
+	}
+	availablePositions = map_size->x * map_size->y - 1;
+	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
+			tailleCaseTemp, ORANGE);
+	generateApple();
 }
 
 void init_snake_game(int x, int y) {
@@ -175,6 +196,12 @@ void init_snake_game(int x, int y) {
 }
 
 void update_snake_game() {
+	// "Press a button to start" part.
+	if (!isGameRunning){
+		if (getCurrentDirection() == NONE){
+			return;
+		}
+	}
 	directions direction = getCurrentDirection();
 	if (direction == NO_DIRECTION) {
 		direction = lastDir;
@@ -212,7 +239,7 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		// If the snake is size = 1, the previous position of the head should not be set as green.
+		// If the snake size = 1, the previous position of the head should not be set as green.
 		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
 			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
@@ -234,5 +261,4 @@ void update_snake_game() {
 		snake_head->y = next_position->y;
 		generateApple();
 	}
-	// print_map();
 }
