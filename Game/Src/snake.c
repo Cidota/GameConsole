@@ -36,7 +36,6 @@ void generateApple() {
 	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions))
 			+ 1;
 	unsigned int cpt = 0;
-	bool hasBeenSet = false;
 	for (int i = 0; i < map_size->x * map_size->y; i++) {
 		if (map[i]->type == VOID) {
 			cpt++;
@@ -46,7 +45,6 @@ void generateApple() {
 					tailleCaseTemp, RED);
 			map[i]->type = APPLE;
 			map[i]->direction = NO_DIRECTION;
-			hasBeenSet = true;
 
 			break;
 		}
@@ -214,7 +212,7 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		if (!(next_positionx == snake_tail->x && next_position->y == snake_tail->y)){
+		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
 			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 					tailleCaseTemp, GREEN);
 		}
