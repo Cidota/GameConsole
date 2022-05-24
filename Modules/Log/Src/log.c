@@ -11,16 +11,16 @@
 
 #include "time.h"
 
-bool logActive = true;
+bool log_active = true;
 
 void toggleLog(void)
 {
-    logActive = logActive ? false : true;
+	log_active = log_active ? false : true;
 }
 
 bool getLogActive(void)
 {
-    return logActive;
+    return log_active;
 }
 
 void log_printf(const char *format, ...)

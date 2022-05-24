@@ -18,7 +18,7 @@ int _write(int file, char *ptr, int len)
     {
         char c = *ptr++;
         tty_write(c);
-        if (c == '\n' && send_cr_after_nl)
+        if (c == '\n')
         {
         	tty_write('\r');
         }

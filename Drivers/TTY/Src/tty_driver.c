@@ -6,10 +6,14 @@
 
 #include "tty_driver.h"
 
+static u16 tx_buf_get_idx = 0;
+static u16 tx_buf_put_idx = 0;
+static char tx_buf[1024];
+
 void tty_open()
 {
     memset(&tx_buf, 0, sizeof(tx_buf));
-    LL_USART_EnableIT_TXE(uart_reg_base);
+    LL_USART_EnableIT_TXE(USART2);
     NVIC_SetPriority(USART2_IRQn,
                      NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
     NVIC_EnableIRQ(USART2_IRQn);
@@ -32,10 +36,10 @@ void tty_write(char c)
     tx_buf_put_idx = next_put_idx;
 
     // Ensure the TX interrupt is enabled.
-    if (uart_reg_base != NULL)
+    if (USART2 != NULL)
     {
         __disable_irq();
-        LL_USART_EnableIT_TXE(uart_reg_base);
+        LL_USART_EnableIT_TXE(USART2);
         __enable_irq();
     }
 }
@@ -48,25 +52,25 @@ static void ttys_interrupt(IRQn_Type irq_type)
 
     // If instance is not open, we should not get an interrupt, but for safety
     // just disable it.
-    if (uart_reg_base == NULL)
+    if (USART2 == NULL)
     {
         NVIC_DisableIRQ(irq_type);
         return;
     }
 
-    sr = uart_reg_base->ISR;
+    sr = USART2->ISR;
 
     if (sr & LL_USART_ISR_TXE)
     {
         // Can send a character.
         if (tx_buf_get_idx == tx_buf_put_idx)
         {
-            // No characters to send, disable the interrrupt.
-            LL_USART_DisableIT_TXE(uart_reg_base);
+            // No characters to send, disable the interrupt.
+            LL_USART_DisableIT_TXE(USART2);
         }
         else
         {
-            uart_reg_base->TDR = tx_buf[tx_buf_get_idx];
+        	USART2->TDR = tx_buf[tx_buf_get_idx];
             if (tx_buf_get_idx < 1024 - 1)
                 tx_buf_get_idx++;
             else
@@ -80,7 +84,7 @@ static void ttys_interrupt(IRQn_Type irq_type)
         // Error conditions. To clear the bit, we need to read the data
         // register, but we don't use it.
 
-    	uart_reg_base->ICR = sr & 0xf;
+    	USART2->ICR = sr & 0xf;
     }
 }
 

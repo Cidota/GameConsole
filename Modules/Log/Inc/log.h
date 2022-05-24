@@ -48,7 +48,7 @@ void log_printf(const char *format, ...);
 #define logError(fmt, ...)                          \
     do                                              \
     {                                               \
-        if (logActive && log_level >= LOG_ERROR)    \
+        if (log_active && log_level >= LOG_ERROR)    \
             log_printf("ERR  " fmt, ##__VA_ARGS__); \
     } while (0)
 /**
@@ -58,12 +58,12 @@ void log_printf(const char *format, ...);
 #define logDebug(fmt, ...)                          \
     do                                              \
     {                                               \
-        if (logActive && log_level >= LOG_DEBUG)    \
+        if (log_active && log_level >= LOG_DEBUG)    \
             log_printf("DBG  " fmt, ##__VA_ARGS__); \
     } while (0)
 
 // Following variable is global to allow efficient access by macros,
 // but is considered private.
-extern bool logActive;
+extern bool log_active;
 
 #endif // __LOG_H__
