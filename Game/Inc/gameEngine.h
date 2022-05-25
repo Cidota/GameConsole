@@ -16,7 +16,6 @@
 #include <string.h>
 
 #define offset 160
-static bool renderOthers = true;
 
 typedef enum games
 {
@@ -42,7 +41,7 @@ struct screen_updates
     unsigned int size;
     struct sprite *sprites;
 };
-
+void setRenderOthersTrue();
 void init();
 
 void init_game(games game);
@@ -53,7 +52,7 @@ void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite);
 
 void resetSpriteUpdate();
 
-void draw();
+void render();
 
 // void end_game();
 

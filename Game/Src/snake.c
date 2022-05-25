@@ -155,8 +155,6 @@ void reset_snake_game() {
 }
 
 void init_render(){
-	// TODO: Find an implementation to call renderUI and renderBackGround from here.
-	// Temp : redraw the entire map in blank.
 	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 			tailleCaseTemp, ORANGE);
 	generateApple();
@@ -184,6 +182,8 @@ void init_snake_game(int x, int y) {
 		logError("Memory limit exceeded.\n");
 		destroy_snake_game();
 	}
+	map_size->x = x;
+	map_size->y = y;
 	map = malloc(sizeof(struct snake_case*) * map_size->x * map_size->y);
 	if (map == NULL) {
 		logError("Memory limit exceeded.\n");
@@ -196,12 +196,9 @@ void init_snake_game(int x, int y) {
 			destroy_snake_game();
 		}
 	}	
-	map_size->x = x;
-	map_size->y = y;
 	srand(LL_RNG_ReadRandData32(RNG));
 	lastDir = RIGHT;
 	init_snake_variables();
-	init_render();
 }
 
 void update_snake_game() {
@@ -211,8 +208,9 @@ void update_snake_game() {
 			return;
 		}
 		else{
-			renderOthers=true;
+			setRenderOthersTrue();
 			isGameRunning = true;
+			init_render();
 			return;
 		}
 	}

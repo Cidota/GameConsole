@@ -4,6 +4,8 @@ struct screen_updates *screen_updates;
 games currentGame = NONE;
 static int screenUpdatesIndex = 0;
 
+bool renderNonGameElements = true;
+
 void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite) {
 	screen_updates->sprites[screenUpdatesIndex].position.x = posX;
 	screen_updates->sprites[screenUpdatesIndex].position.y = posY;
@@ -24,12 +26,12 @@ void resetSpriteUpdate() {
 }
 
 void init() {
-	init_game(SNAKE_GAME);
+      	init_game(SNAKE_GAME);
 }
 
 void init_game(games game) {
 	currentGame = game;
-	renderOthers = true;
+	renderNonGameElements = true;
 	if (currentGame == NONE) {
 		printf("GameEngine couldn't find any game to update.\n");
 		exit(1);
@@ -92,9 +94,13 @@ void update() {
 	}
 }
 
+void setRenderNonGameElementsTrue(){
+	renderNonGameElements = true;
+}
 
-void draw(){
-	if (renderOthers){
+
+void render(){
+	if (renderNonGameElements){
 		switch (currentGame) {
 		case SNAKE_GAME:
 			render_snake_UI();
@@ -103,7 +109,7 @@ void draw(){
 		default:
 			break;
 		}
-		renderOthers = false;
+		renderNonGameElements = false;
 	}
 	if (screen_updates != NULL && screenUpdatesIndex != 0) {
 		for (int i = 0; i < screenUpdatesIndex; i++) {

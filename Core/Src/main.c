@@ -108,7 +108,7 @@ int main(void) {
 	LCDInit();
 
 	init();
-	draw();
+	render();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -119,7 +119,7 @@ int main(void) {
 		/* USER CODE BEGIN 3 */
 
 		update();
-		draw();
+		render();
 
 	}
 	/* USER CODE END 3 */
