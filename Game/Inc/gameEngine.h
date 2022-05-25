@@ -50,7 +50,7 @@ struct sprite
 {
     struct coordinate position; /**< Top left corner of the sprite. */
     struct coordinate size;     /**< Size of the sprite. */
-    enum color sprite;          /**< Color of the sprite. */
+    enum colors sprite;          /**< Color of the sprite. */
 };
 
 /**
@@ -89,7 +89,7 @@ void update();
  * @param sizeY height of the sprite.
  * @param sprite color/image of the sprite.
  **/
-void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite);
+void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, colors sprite);
 
 /**
  * @brief Reset the list of updates to render

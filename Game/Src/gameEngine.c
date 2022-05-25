@@ -11,7 +11,7 @@ struct screen_updates *screen_updates;
 games currentGame = NONE;
 bool renderNonGameElements = true;
 
-void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite) {
+void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, colors sprite) {
 	screen_updates->sprites[screen_updates->currentIndex].position.x = posX;
 	screen_updates->sprites[screen_updates->currentIndex].position.y = posY;
 	screen_updates->sprites[screen_updates->currentIndex].size.x = sizeX;

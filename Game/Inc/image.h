@@ -24,7 +24,7 @@
 #define BM_PINK    0xF4F4
 #define BM_ORANGE  0xE4E4
 
-typedef enum color
+typedef enum colors
 {
     BLACK = BM_BLACK,
     WHITE = BM_WHITE,
@@ -34,7 +34,7 @@ typedef enum color
     GREEN = BM_GREEN,
     ORANGE = BM_ORANGE,
     PINK = BM_PINK
-} color;
+} colors;
 
 
 typedef enum sprite_type
