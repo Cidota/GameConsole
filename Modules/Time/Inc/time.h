@@ -9,11 +9,12 @@
 #define __TIME_H__
 
 #include "common.h"
+#include "timer_driver.h"
 
 /**
- * @brief Gets the time from the last frame to the current one.
- * @return The time since the last frame in ms.
+ * @brief Gets the time in ms.
+ * @return system tick value
  **/
-uint getDeltaTime();
+u32 getTimeMs();
 
 #endif // __TIME_H__
