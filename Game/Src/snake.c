@@ -201,6 +201,66 @@ void init_snake_game(int x, int y) {
 	init_snake_variables();
 }
 
+sprite_type getSnakeHeadSprite(directions to){
+	switch (to){
+		case UP:
+			return SNAKE_HEAD_UP;
+		case RIGHT:
+			return SNAKE_HEAD_RIGHT;
+		case DOWN:
+			return SNAKE_HEAD_DOWN;
+		case LEFT:
+			return SNAKE_HEAD_LEFT;
+		default:
+			return SNAKE_HEAD_DOWN;
+	}
+}
+
+// From is the previous direction choosen, to is the next one.
+// Exemple : If from = UP and to = RIGHT, the snake is moving from up to right.
+sprite_type getSnakeBodySprite(directions from, directions to){
+	if (from == to){
+		if (from == RIGHT || from == LEFT){
+			return SNAKE_BODY_HORIZONTAL;
+		}
+		else{
+			return SNAKE_BODY_VERTICAL;
+		}
+	}
+	else{
+		if ((from == UP && to == RIGHT) || (from == LEFT && to == DOWN)){
+			return SNAKE_BODY_CURVE_DOWN_RIGHT;
+		}
+		else if ((from ==RIGHT && to == DOWN) || (from == UP && to == LEFT)){
+			return SNAKE_BODY_CURVE_DOWN_LEFT;
+		}		
+		else if ((from ==DOWN && to == LEFT) || (from == RIGHT && to == UP)){
+			return SNAKE_BODY_CURVE_UP_LEFT;
+		}		
+		else if ((from ==LEFT && to == UP) || (from == DOWN && to == RIGHT)){
+			return SNAKE_BODY_CURVE_DOWN_RIGHT;
+		}
+		else{
+			logDebug("Couldn't find the curve of the snake\n");
+		}
+	}
+}
+
+sprite_type getSnakeTailSprite(directions direction){
+	switch(direction){
+		case UP:
+			return SNAKE_TAIL_UP;
+		case DOWN:
+			return SNAKE_TAIL_DOWN;
+		case LEFT:
+			return SNAKE_TAIL_LEFT;
+		case RIGHT:
+			return SNAKE_TAIL_RIGHT;
+		default:
+			logDebug("Couldn't render the tail of the snake.\n");
+	}
+}
+
 void update_snake_game() {
 	// "Press a button to start" part.
 	if (!isGameRunning){
