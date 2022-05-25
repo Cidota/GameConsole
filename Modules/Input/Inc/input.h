@@ -8,6 +8,10 @@
 #ifndef __INPUT_H__
 #define __INPUT_H__
 
+#include "image.h"
+
+#include <stdbool.h>
+
 /**
  * @brief Different buttons used by the games.
  **/
@@ -21,7 +25,8 @@ typedef enum
     DIRECTION_RIGHT = 4, /**< the RIGHT button on the D-Pad */
     DIRECTION_LEFT = 5,  /**< the LEFT button on the D-Pad */
     START = 6,           /**< the START button */
-    POWER = 7            /**< the POWER button */
+    POWER = 7,           /**< the POWER button */
+    NB_BUTTONS           /**< the number of buttons */
 } buttons;
 
 /**
@@ -30,11 +35,11 @@ typedef enum
 typedef enum
 {
     /* directions */
-    UP = 0,    /**< up */
-    DOWN = 1,  /**< down */
-    LEFT = 2,  /**< left */
-    RIGHT = 3, /**< right */
-    NONE = 4   /**< no direction */
+    UP = 0,          /**< up */
+    DOWN = 1,        /**< down */
+    LEFT = 2,        /**< left */
+    RIGHT = 3,       /**< right */
+    NO_DIRECTION = 4 /**< no direction */
 } directions;
 
 /**
@@ -49,5 +54,8 @@ bool getButtonState(buttons button);
  * @return a direction if available, NONE otherwise
  **/
 directions getCurrentDirection();
+
+void toggleButton(buttons button);
+void initButtons();
 
 #endif // __INPUT_H__

@@ -22,6 +22,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <string.h>
+#include "tty_driver.h"
+#include "log.h"
+#include "input.h"
+#include "gameEngine.h"
+#include "lcd.h"
+#include "graphics.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,8 +52,10 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -82,6 +90,9 @@ int main(void) {
 	/* Configure the system clock */
 	SystemClock_Config();
 
+	/* Configure the peripherals common clocks */
+	PeriphCommonClock_Config();
+
 	/* USER CODE BEGIN SysInit */
 
 	/* USER CODE END SysInit */
@@ -89,8 +100,15 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_USART2_UART_Init();
+	MX_RNG_Init();
 	/* USER CODE BEGIN 2 */
+	tty_open();
+	LL_SYSTICK_EnableIT();
+	initButtons();
+	LCDInit();
 
+	init();
+	render();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -99,13 +117,10 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		uint8_t *ch = (uint8_t*)"Hello world\n\r";
-		for (size_t i = 0; i < strlen("Hello world\n\r"); i++) {
-			LL_USART_TransmitData8(USART2, *ch++);
-			while (!LL_USART_IsActiveFlag_TXE(USART2))
-				;
-		}
-		LL_mDelay(1000);
+
+		update();
+		render();
+
 	}
 	/* USER CODE END 3 */
 }
@@ -148,6 +163,48 @@ void SystemClock_Config(void) {
 	LL_Init1msTick(80000000);
 
 	LL_SetSystemCoreClock(80000000);
+}
+
+/**
+ * @brief Peripherals Common Clock Configuration
+ * @retval None
+ */
+void PeriphCommonClock_Config(void) {
+	LL_RCC_PLLSAI1_ConfigDomain_48M(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_1, 8,
+			LL_RCC_PLLSAI1Q_DIV_4);
+	LL_RCC_PLLSAI1_EnableDomain_48M();
+	LL_RCC_PLLSAI1_Enable();
+
+	/* Wait till PLLSAI1 is ready */
+	while (LL_RCC_PLLSAI1_IsReady() != 1) {
+
+	}
+}
+
+/**
+ * @brief RNG Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_RNG_Init(void) {
+
+	/* USER CODE BEGIN RNG_Init 0 */
+
+	/* USER CODE END RNG_Init 0 */
+
+	LL_RCC_SetRNGClockSource(LL_RCC_RNG_CLKSOURCE_PLLSAI1);
+
+	/* Peripheral clock enable */
+	LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_RNG);
+
+	/* USER CODE BEGIN RNG_Init 1 */
+
+	/* USER CODE END RNG_Init 1 */
+	LL_RNG_Enable(RNG);
+	/* USER CODE BEGIN RNG_Init 2 */
+
+	/* USER CODE END RNG_Init 2 */
+
 }
 
 /**
@@ -262,7 +319,7 @@ static void MX_GPIO_Init(void) {
 	EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
 	EXTI_InitStruct.LineCommand = ENABLE;
 	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/**/
@@ -270,7 +327,7 @@ static void MX_GPIO_Init(void) {
 	EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
 	EXTI_InitStruct.LineCommand = ENABLE;
 	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/**/
@@ -294,7 +351,7 @@ static void MX_GPIO_Init(void) {
 	EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
 	EXTI_InitStruct.LineCommand = ENABLE;
 	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/**/
@@ -302,7 +359,7 @@ static void MX_GPIO_Init(void) {
 	EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
 	EXTI_InitStruct.LineCommand = ENABLE;
 	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/**/
@@ -326,14 +383,14 @@ static void MX_GPIO_Init(void) {
 	EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
 	EXTI_InitStruct.LineCommand = ENABLE;
 	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/**/
 	LL_GPIO_SetPinPull(B0_GPIO_Port, B0_Pin, LL_GPIO_PULL_NO);
 
 	/**/
-	LL_GPIO_SetPinPull(B3_GPIO_Port, B3_Pin, LL_GPIO_PULL_NO);
+	LL_GPIO_SetPinPull(B3_GPIO_Port, B3_Pin, LL_GPIO_PULL_UP);
 
 	/**/
 	LL_GPIO_SetPinPull(B7_GPIO_Port, B7_Pin, LL_GPIO_PULL_NO);
@@ -342,10 +399,10 @@ static void MX_GPIO_Init(void) {
 	LL_GPIO_SetPinPull(B8_GPIO_Port, B8_Pin, LL_GPIO_PULL_NO);
 
 	/**/
-	LL_GPIO_SetPinPull(B2_GPIO_Port, B2_Pin, LL_GPIO_PULL_NO);
+	LL_GPIO_SetPinPull(B2_GPIO_Port, B2_Pin, LL_GPIO_PULL_UP);
 
 	/**/
-	LL_GPIO_SetPinPull(B1_GPIO_Port, B1_Pin, LL_GPIO_PULL_NO);
+	LL_GPIO_SetPinPull(B1_GPIO_Port, B1_Pin, LL_GPIO_PULL_UP);
 
 	/**/
 	LL_GPIO_SetPinPull(B6_GPIO_Port, B6_Pin, LL_GPIO_PULL_NO);
@@ -354,7 +411,7 @@ static void MX_GPIO_Init(void) {
 	LL_GPIO_SetPinPull(B5_GPIO_Port, B5_Pin, LL_GPIO_PULL_NO);
 
 	/**/
-	LL_GPIO_SetPinPull(B4_GPIO_Port, B4_Pin, LL_GPIO_PULL_NO);
+	LL_GPIO_SetPinPull(B4_GPIO_Port, B4_Pin, LL_GPIO_PULL_UP);
 
 	/**/
 	LL_GPIO_SetPinMode(B0_GPIO_Port, B0_Pin, LL_GPIO_MODE_INPUT);
@@ -408,6 +465,20 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
 	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	/* EXTI interrupt init*/
+	NVIC_SetPriority(EXTI1_IRQn,
+			NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+	NVIC_EnableIRQ(EXTI1_IRQn);
+	NVIC_SetPriority(EXTI2_IRQn,
+			NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+	NVIC_EnableIRQ(EXTI2_IRQn);
+	NVIC_SetPriority(EXTI9_5_IRQn,
+			NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+	NVIC_EnableIRQ(EXTI9_5_IRQn);
+	NVIC_SetPriority(EXTI15_10_IRQn,
+			NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+	NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 

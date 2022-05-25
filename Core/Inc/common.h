@@ -13,14 +13,21 @@
 // Type definitions
 
 /**
- * @brief Standard unsigned integer type.
+ * @brief Variable unsigned integer type.
  **/
 typedef unsigned int uint;
+
+typedef uint8_t  u8;
 
 /**
  * @brief Standard unsigned short type.
  **/
 typedef uint16_t u16;
+
+/**
+ * @brief Standard unsigned integer type.
+ **/
+typedef uint32_t u32;
 
 // Constants
 
