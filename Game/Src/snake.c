@@ -9,6 +9,7 @@ struct coordinate *map_size;
 struct snake_case **map;
 directions lastDir;
 int availablePositions = -1;
+bool isGameRunning = false;
 
 directions getReverseDirection(directions d) {
 	switch (d) {
@@ -32,6 +33,7 @@ void generateApple() {
 	}
 	if (availablePositions < 0) {
 		reset_snake_game();
+		return;
 	}
 	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions))
 			+ 1;
@@ -125,12 +127,48 @@ void destroy_snake_game() {
 	exit(0);
 }
 
+void init_snake_variables(){
+	isGameRunning = false;
+	snake_head->x = map_size->x / 2;
+	snake_head->y = map_size->y / 2;
+	snake_tail->x = snake_head->x;
+	snake_tail->y = snake_head->y;
+	for (int i = 0; i < map_size->x * map_size->y; i++) {
+		map[i]->type = VOID;
+		map[i]->direction = NO_DIRECTION;
+	}
+	map[getIndex(snake_head)]->type = SNAKE;
+	map[getIndex(snake_head)]->direction = NO_DIRECTION;
+	availablePositions = map_size->x * map_size->y - 1;
+}
+
 void reset_snake_game() {
-	printf("***\nGame over.\n***\n");
-	printf(". S . .\n*** Reseting Snake Game***\n");
+	logDebug("***Game over.***\n");
+	logDebug("*** Reseting Snake Game***\n");
+	isGameRunning = false;
 	// temp indicator that game is over
 	drawRectangle(0, 0, 160, 320, RED);
-	exit(1);
+	// Reset all the values. This function consider that map_size is well defined.
+	 init_snake_variables();
+
+	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
+}
+
+void init_render(){
+	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
+			tailleCaseTemp, ORANGE);
+	generateApple();
+}
+
+void render_snake_UI(){
+	drawRectangle(0, 0, 160, 320, BLACK);
+	drawRectangle(480 - 14, 0, 14, 320, BLACK);
+	drawRectangle(160, 320 - 14, 480 - 160, 14, BLACK);
+}
+
+void render_snake_Background(){
+	drawRectangle(
+		offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
 }
 
 void init_snake_game(int x, int y) {
@@ -157,24 +195,25 @@ void init_snake_game(int x, int y) {
 			logError("Memory limit exceeded.\n");
 			destroy_snake_game();
 		}
-		map[i]->type = VOID;
-		map[i]->direction = NO_DIRECTION;
-	}
+	}	
 	srand(LL_RNG_ReadRandData32(RNG));
-	snake_head->x = map_size->x / 2;
-	snake_head->y = map_size->y / 2;
-	snake_tail->x = snake_head->x;
-	snake_tail->y = snake_head->y;
-	map[getIndex(snake_head)]->direction = NO_DIRECTION;
-	map[getIndex(snake_head)]->type = SNAKE;
-	availablePositions = map_size->x * map_size->y - 1;
 	lastDir = RIGHT;
-	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-			tailleCaseTemp, ORANGE);
-	generateApple();
+	init_snake_variables();
 }
 
 void update_snake_game() {
+	// "Press a button to start" part.
+	if (!isGameRunning){
+		if (getCurrentDirection() == NO_DIRECTION){
+			return;
+		}
+		else{
+			setRenderOthersTrue();
+			isGameRunning = true;
+			init_render();
+			return;
+		}
+	}
 	directions direction = getCurrentDirection();
 	if (direction == NO_DIRECTION) {
 		direction = lastDir;
@@ -191,6 +230,7 @@ void update_snake_game() {
 			|| (map[indexNextPos]->type == SNAKE
 					&& indexNextPos != getIndex(snake_tail))) {
 		reset_snake_game();
+		return;
 	}
 	if (map[indexNextPos]->type == VOID || map[indexNextPos]->type == SNAKE) {
 		int indexSnakeTail = getIndex(snake_tail);
@@ -212,7 +252,7 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		// If the snake is size = 1, the previous position of the head should not be set as green.
+		// If the snake size = 1, the previous position of the head should not be set as green.
 		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
 			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
@@ -234,5 +274,4 @@ void update_snake_game() {
 		snake_head->y = next_position->y;
 		generateApple();
 	}
-	// print_map();
 }

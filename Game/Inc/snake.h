@@ -31,7 +31,8 @@ void reset_snake_game();
 
 void destroy_snake_game();
 
-// TK
-void print_map();
+void render_snake_UI();
+
+void render_snake_Background();
 
 #endif

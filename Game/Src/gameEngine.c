@@ -4,6 +4,8 @@ struct screen_updates *screen_updates;
 games currentGame = NONE;
 static int screenUpdatesIndex = 0;
 
+bool renderNonGameElements = true;
+
 void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite) {
 	screen_updates->sprites[screenUpdatesIndex].position.x = posX;
 	screen_updates->sprites[screenUpdatesIndex].position.y = posY;
@@ -24,11 +26,12 @@ void resetSpriteUpdate() {
 }
 
 void init() {
-	init_game(SNAKE_GAME);
+      	init_game(SNAKE_GAME);
 }
 
 void init_game(games game) {
 	currentGame = game;
+	renderNonGameElements = true;
 	if (currentGame == NONE) {
 		printf("GameEngine couldn't find any game to update.\n");
 		exit(1);
@@ -54,13 +57,9 @@ void init_game(games game) {
 	case SNAKE_GAME:
 		init_snake_game(9, 9);
 		// init the game graphical environment, should be moved
-		drawRectangle(0, 0, 160, 320, BLACK);
-		drawRectangle(480 - 14, 0, 14, 320, BLACK);
-		drawRectangle(160, 320 - 14, 480 - 160, 14, BLACK);
 		break;
 	default:
-		for (int i = 0; i < 10; i++)
-			printf("Couldn't initialize any game.\n");
+		printf("Couldn't initialize any game.\n");
 		exit(1);
 		break;
 	}
@@ -87,7 +86,7 @@ void update() {
 	resetSpriteUpdate();
 	switch (currentGame) {
 	case SNAKE_GAME:
-		if (getDeltaTime(1000))
+		if (getDeltaTime(500))
 			update_snake_game(screen_updates);
 		break;
 	default:
@@ -95,9 +94,23 @@ void update() {
 	}
 }
 
-#define offset 160
+void setRenderNonGameElementsTrue(){
+	renderNonGameElements = true;
+}
 
-void draw() {
+
+void render(){
+	if (renderNonGameElements){
+		switch (currentGame) {
+		case SNAKE_GAME:
+			render_snake_UI();
+			render_snake_Background();
+			break;
+		default:
+			break;
+		}
+		renderNonGameElements = false;
+	}
 	if (screen_updates != NULL && screenUpdatesIndex != 0) {
 		for (int i = 0; i < screenUpdatesIndex; i++) {
 			drawRectangle(
