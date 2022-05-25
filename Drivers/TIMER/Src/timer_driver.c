@@ -6,6 +6,11 @@
 
 #include "timer_driver.h"
 
+/**
+ * @brief Current tick count
+ */
+u32 tickMsCounter = 0;
+
 void sysTick_Handler(void)
 {
 	tickMsCounter++;

@@ -38,7 +38,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 /* USER CODE END PD */
-
+#define FPS 30
+#define FRAMERATE 1000/FPS
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
@@ -104,7 +105,7 @@ int main(void) {
 	/* USER CODE BEGIN 2 */
 	tty_open();
 	LL_SYSTICK_EnableIT();
-	initButtons();
+	initInputs();
 	LCDInit();
 
 	init();
@@ -113,13 +114,21 @@ int main(void) {
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+	u32 startFrameTime = 0;
+	u32 processingTime = 0;
+
 	while (1) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
 
+		startFrameTime = getTimeMs();
 		update();
 		render();
+		processingTime = getTimeMs() - startFrameTime;
+		if (processingTime < FRAMERATE) {
+			LL_mDelay(FRAMERATE - processingTime);
+		}
 
 	}
 	/* USER CODE END 3 */
@@ -142,7 +151,7 @@ void SystemClock_Config(void) {
 	}
 	LL_RCC_HSI_SetCalibTrimming(16);
 	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_1, 10,
-			LL_RCC_PLLR_DIV_2);
+	LL_RCC_PLLR_DIV_2);
 	LL_RCC_PLL_EnableDomain_SYS();
 	LL_RCC_PLL_Enable();
 
@@ -171,7 +180,7 @@ void SystemClock_Config(void) {
  */
 void PeriphCommonClock_Config(void) {
 	LL_RCC_PLLSAI1_ConfigDomain_48M(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_1, 8,
-			LL_RCC_PLLSAI1Q_DIV_4);
+	LL_RCC_PLLSAI1Q_DIV_4);
 	LL_RCC_PLLSAI1_EnableDomain_48M();
 	LL_RCC_PLLSAI1_Enable();
 
