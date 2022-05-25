@@ -1,17 +1,25 @@
+/*
+ * snake.c
+ *
+ *  Created on: May 16, 2022
+ *      Author: Charles Martin
+ */
+
 #include "snake.h"
 #include "gameEngine.h"
 
 struct coordinate *snake_head;
 struct coordinate *snake_tail;
-struct coordinate *next_position;
 struct coordinate *apple;
+struct coordinate *next_position;
 struct coordinate *map_size;
 struct snake_case **map;
 directions lastDir;
-int availablePositions = -1;
+int availablePositions = -1; /**< Available positions for apples */
+int score = 0;
 bool isGameRunning = false;
 
-directions getReverseDirection(directions d) {
+directions getOppositeDirection(directions d) {
 	switch (d) {
 	case UP:
 		return DOWN;
@@ -26,17 +34,19 @@ directions getReverseDirection(directions d) {
 	}
 }
 
+/**
+ * @brief Find a random empty space and set an apple there.
+ */
 void generateApple() {
 	if (map == NULL || map_size == NULL || map_size->x < 1 || map_size->y < 1) {
-		logError("Snake game wasn't initialize correctly.\n");
+		logError("Snake game wasn't initialize correctly, apple couldn't be set.\n");
 		exit(1);
 	}
 	if (availablePositions < 0) {
 		reset_snake_game();
 		return;
 	}
-	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions))
-			+ 1;
+	unsigned int newPos = (unsigned int) (abs(rand()) % (availablePositions)) + 1;
 	unsigned int cpt = 0;
 	for (int i = 0; i < map_size->x * map_size->y; i++) {
 		if (map[i]->type == VOID) {
@@ -52,9 +62,12 @@ void generateApple() {
 		}
 	}
 	availablePositions--;
-	printf("Available Positions = %d\n", availablePositions);
+	logDebug("Available Positions = %d\n", availablePositions);
 }
 
+/**
+ * @brief Update next_pos fields with the position following current_pos in direction d.
+ */
 void getNextPosition(directions d, struct coordinate *current_pos,
 		struct coordinate *next_pos) {
 	if (current_pos == NULL || next_pos == NULL) {
@@ -84,6 +97,9 @@ void getNextPosition(directions d, struct coordinate *current_pos,
 	}
 }
 
+/**
+ * @brief Get index from a position.
+ */
 int getIndex(struct coordinate *pos) {
 	if (map == NULL || pos == NULL) {
 		logError("Null pointer in getIndex.\n");
@@ -92,13 +108,20 @@ int getIndex(struct coordinate *pos) {
 	return pos->x + pos->y * map_size->x;
 }
 
+/**
+ * @brief Assert correct direction.
+ * @details Verify that the direction isn't the opposite of lastDir avoiding that the snake can't bite itself from an 180° turn.
+ */
 directions assertDirection(directions d) {
-	if (d == getReverseDirection(lastDir)) {
-		return getReverseDirection(d);
+	if (d == getOppositeDirection(lastDir)) {
+		return getOppositeDirection(d);
 	}
 	return d;
 }
 
+/**
+ * @brief Free the game memory.
+ */ 
 void destroy_snake_game() {
 	printf("\n*** Destroying Snake Game ***\n");
 	if (snake_head != NULL) {
@@ -148,9 +171,8 @@ void reset_snake_game() {
 	isGameRunning = false;
 	// temp indicator that game is over
 	drawRectangle(0, 0, 160, 320, RED);
-	// Reset all the values. This function consider that map_size is well defined.
+	// Reset all the values. This function consider that map_size is well defined and that the memory is allocated.
 	 init_snake_variables();
-
 	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
 }
 
@@ -262,22 +284,25 @@ sprite_type getSnakeTailSprite(directions direction){
 }
 
 void update_snake_game() {
+	directions direction = acceptBufferedDirction();
 	// "Press a button to start" part.
 	if (!isGameRunning){
-		if (getCurrentDirection() == NO_DIRECTION){
+		if (direction == NO_DIRECTION){
 			return;
 		}
 		else{
 			setRenderNonGameElementsTrue();
 			isGameRunning = true;
 			init_render();
+			lastDir = direction;
 			return;
 		}
 	}
-	directions direction = getCurrentDirection();
+	// Fetch the direction.
 	if (direction == NO_DIRECTION) {
 		direction = lastDir;
 	}
+	// If snake size != 1 verify that the snake isn't doing a 180° turn. 
 	if (!(snake_tail->x == snake_head->x && snake_tail->y == snake_head->y)) {
 		direction = assertDirection(direction);
 	}
@@ -285,6 +310,7 @@ void update_snake_game() {
 	getNextPosition(direction, snake_head, next_position);
 	int indexNextPos = getIndex(next_position);
 	int indexCurrentPos = getIndex(snake_head);
+	// End condition. (snake out of map or biting itself)
 	if (next_position->x < 0 || next_position->x >= map_size->x
 			|| next_position->y < 0 || next_position->y >= map_size->y
 			|| (map[indexNextPos]->type == SNAKE
@@ -292,6 +318,10 @@ void update_snake_game() {
 		reset_snake_game();
 		return;
 	}
+	// If the next position is not apple 3 steps:
+	// 1. Remove the tail and set it as blank.
+	// 2. Set the head position as green
+	// 3. Set the next position of the head as red.
 	if (map[indexNextPos]->type == VOID || map[indexNextPos]->type == SNAKE) {
 		int indexSnakeTail = getIndex(snake_tail);
 		getNextPosition(map[indexSnakeTail]->direction, snake_tail,
@@ -300,6 +330,7 @@ void update_snake_game() {
 		map[indexSnakeTail]->type = VOID;
 		addSpriteUpdate(snake_tail->x, snake_tail->y, tailleCaseTemp,
 				tailleCaseTemp, WHITE);
+		// size = 1, tail should be in the same spot as the head.
 		if (snake_tail->x == snake_head->x && snake_tail->y == snake_head->y) {
 			getNextPosition(direction, snake_head, next_position);
 			snake_tail->x = next_position->x;
@@ -322,6 +353,10 @@ void update_snake_game() {
 		snake_head->y = next_position->y;
 		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
 				tailleCaseTemp, ORANGE);
+	// If the next head position is an apple, 3 steps:
+	// 1. set the head as green.
+	// 2. move the head and set the new position as red.
+	// 3. generate a new apple.
 	} else if (map[indexNextPos]->type == APPLE) {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;

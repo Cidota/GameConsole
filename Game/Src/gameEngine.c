@@ -1,18 +1,23 @@
+/*
+ * gameEngine.c
+ *
+ *  Created on: May 21, 2022
+ *      Author: Charles Martin
+ */
+
 #include "gameEngine.h"
 
 struct screen_updates *screen_updates;
 games currentGame = NONE;
-static int screenUpdatesIndex = 0;
-
 bool renderNonGameElements = true;
 
 void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, color sprite) {
-	screen_updates->sprites[screenUpdatesIndex].position.x = posX;
-	screen_updates->sprites[screenUpdatesIndex].position.y = posY;
-	screen_updates->sprites[screenUpdatesIndex].size.x = sizeX;
-	screen_updates->sprites[screenUpdatesIndex].size.y = sizeY;
-	screen_updates->sprites[screenUpdatesIndex].sprite = sprite;
-	screenUpdatesIndex += 1;
+	screen_updates->sprites[screen_updates->currentIndex].position.x = posX;
+	screen_updates->sprites[screen_updates->currentIndex].position.y = posY;
+	screen_updates->sprites[screen_updates->currentIndex].size.x = sizeX;
+	screen_updates->sprites[screen_updates->currentIndex].size.y = sizeY;
+	screen_updates->sprites[screen_updates->currentIndex].sprite = sprite;
+	screen_updates->currentIndex += 1;
 }
 void resetSpriteUpdate() {
 	for (int i = 0; i < screen_updates->size; i++) {
@@ -22,11 +27,11 @@ void resetSpriteUpdate() {
 		screen_updates->sprites[i].size.y = 0;
 		screen_updates->sprites[i].sprite = BLACK;
 	}
-	screenUpdatesIndex = 0;
+	screen_updates->currentIndex = 0;
 }
 
 void init() {
-      	init_game(SNAKE_GAME);
+	init_game(SNAKE_GAME);
 }
 
 void init_game(games game) {
@@ -40,6 +45,7 @@ void init_game(games game) {
 	if (screen_updates == NULL) {
 		logError("Memory limit exceeded.\n");
 	}
+	screen_updates->currentIndex = 0;
 	switch (currentGame) {
 	case SNAKE_GAME:
 		screen_updates->size = 3;
@@ -56,7 +62,6 @@ void init_game(games game) {
 	switch (currentGame) {
 	case SNAKE_GAME:
 		init_snake_game(9, 9);
-		// init the game graphical environment, should be moved
 		break;
 	default:
 		printf("Couldn't initialize any game.\n");
@@ -66,6 +71,7 @@ void init_game(games game) {
 
 }
 
+//temp
 bool getDeltaTime(int t) {
 	static u32 last_ms = 0;
 	u32 now_ms = getTimeMs();
@@ -111,8 +117,8 @@ void render(){
 		}
 		renderNonGameElements = false;
 	}
-	if (screen_updates != NULL && screenUpdatesIndex != 0) {
-		for (int i = 0; i < screenUpdatesIndex; i++) {
+	if (screen_updates != NULL && screen_updates->currentIndex != 0) {
+		for (int i = 0; i < screen_updates->currentIndex ; i++) {
 			drawRectangle(
 			offset + (screen_updates->sprites[i].position.x * tailleCaseTemp),
 			tailleCaseTemp * screen_updates->sprites[i].position.y,

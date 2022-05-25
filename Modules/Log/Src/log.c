@@ -13,6 +13,11 @@
 
 bool log_active = true;
 
+/**
+ * @brief The current log level, will affect what logs are printed.
+ **/
+loglevel log_level = LOG_DEBUG;
+
 void toggleLog(void) {
 	log_active = log_active ? false : true;
 }
