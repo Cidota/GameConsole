@@ -208,7 +208,7 @@ void update_snake_game() {
 			return;
 		}
 		else{
-			setRenderOthersTrue();
+			setRenderNonGameElementsTrue();
 			isGameRunning = true;
 			init_render();
 			return;
