@@ -11,11 +11,6 @@
 #include "common.h"
 
 /**
- * @brief Current tick count
- */
-static u32 tickMsCounter;
-
-/**
  * @brief System tick interrupt handler.
  * @details This function is called from the SysTick_Handler().
  */

@@ -45,6 +45,7 @@ void init_game(games game) {
 	if (screen_updates == NULL) {
 		logError("Memory limit exceeded.\n");
 	}
+	screen_updates->currentIndex = 0;
 	switch (currentGame) {
 	case SNAKE_GAME:
 		screen_updates->size = 3;

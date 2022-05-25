@@ -224,20 +224,21 @@ void init_snake_game(int x, int y) {
 }
 
 void update_snake_game() {
+	directions direction = acceptBufferedDirction();
 	// "Press a button to start" part.
 	if (!isGameRunning){
-		if (getCurrentDirection() == NO_DIRECTION){
+		if (direction == NO_DIRECTION){
 			return;
 		}
 		else{
 			setRenderNonGameElementsTrue();
 			isGameRunning = true;
 			init_render();
+			lastDir = direction;
 			return;
 		}
 	}
 	// Fetch the direction.
-	directions direction = getCurrentDirection();
 	if (direction == NO_DIRECTION) {
 		direction = lastDir;
 	}

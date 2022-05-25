@@ -15,17 +15,12 @@
 /**
  * @brief Different log levels possible.
  **/
-enum log_level {
+typedef enum {
 	LOG_OFF = 0, /**< no logs */
 	LOG_ERROR = 1, /**< error logs only */
 	LOG_DEBUG = 2, /**< error and debug logs */
 	LOG_DEFAULT = LOG_ERROR /**< by default we have a log level of error */
-};
-
-/**
- * @brief The current log level, will affect what logs are printed.
- **/
-static int32_t log_level = LOG_DEBUG;
+} loglevel;
 
 /**
  * @brief Toggles whether logging is active.
@@ -69,5 +64,6 @@ void log_printf(const char *format, ...);
 // Following variable is global to allow efficient access by macros,
 // but is considered private.
 extern bool log_active;
+extern loglevel log_level;
 
 #endif // __LOG_H__

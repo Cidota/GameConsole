@@ -25,9 +25,6 @@
 
 #define offset 160
 
-// renderOthers is true when the UI and background of a game must be render.
-static bool renderOthers = true;
-
 /**
  * @brief Different games available.
  **/
