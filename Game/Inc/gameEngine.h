@@ -41,7 +41,7 @@ struct screen_updates
     unsigned int size;
     struct sprite *sprites;
 };
-void setRenderOthersTrue();
+void setRenderNonGameElementsTrue();
 void init();
 
 void init_game(games game);
