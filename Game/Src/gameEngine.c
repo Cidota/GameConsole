@@ -21,6 +21,16 @@ void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color) {
 	screen_updates->currentIndex += 1;
 }
 
+void addSpriteUpdate(int posX, int posY, sprite_type sprite) {
+	screen_updates->items[screen_updates->currentIndex].position.x = posX;
+	screen_updates->items[screen_updates->currentIndex].position.y = posY;
+	screen_updates->items[screen_updates->currentIndex].size.x = getImageWidth(sprite);
+	screen_updates->items[screen_updates->currentIndex].size.y =  getImageHeight(sprite);
+	screen_updates->items[screen_updates->currentIndex].item_type = BITMAP;
+	screen_updates->items[screen_updates->currentIndex].item.sprite = sprite;
+	screen_updates->currentIndex += 1;
+}
+
 void resetSpriteUpdate() {
 	for (int i = 0; i < screen_updates->size; i++) {
 		screen_updates->items[i].position.x = 0;
@@ -51,7 +61,7 @@ void init_game(games game) {
 	screen_updates->currentIndex = 0;
 	switch (currentGame) {
 	case SNAKE_GAME:
-		screen_updates->size = 3;
+		screen_updates->size = 4;
 		break;
 	default:
 		screen_updates->size = 0;
@@ -132,9 +142,12 @@ void render(){
 							screen_updates->items[i].item.color);
 					break;
 				case BITMAP:
-				//drawBitmap(
-				//	offset + (screen_updates->items[i].position.x * tailleCaseTemp),
-				//  tailleCaseTemp * screen_updates->items[i].position.y, uint y, uint height, uint width, u16 bitmap[]);
+				drawBitmap(
+					offset + (screen_updates->items[i].position.x * tailleCaseTemp),
+					tailleCaseTemp * screen_updates->items[i].position.y,
+							screen_updates->items[i].size.x,
+							screen_updates->items[i].size.y,
+							 getImage(screen_updates->items[i].item.sprite));
 					break;
 				default:
 					break;

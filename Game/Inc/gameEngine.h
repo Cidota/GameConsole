@@ -55,7 +55,7 @@ struct coordinate
 typedef union sprite
 {
     enum colors color;
-    char* name;
+    sprite_type sprite;
 } sprite;
 
 /**
@@ -98,7 +98,7 @@ void init_game(games game);
 void update();
 
 /**
- * @brief Add a item/color to render next frame.
+ * @brief Add a color to render next frame.
  * @param posX left corner of the item.
  * @param posY top corner of the item
  * @param sizeX width of the item.
@@ -107,6 +107,14 @@ void update();
  **/
 void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color);
 
+
+/**
+ * @brief Add a sprite to render next frame.
+ * @param posX left corner of the item.
+ * @param posY top corner of the item.
+ * @param sprite enum referencing a sprite.
+ **/
+void addSpriteUpdate(int posX, int posY, sprite_type sprite);
 /**
  * @brief Reset the list of updates to render
  * @details Must be called after having render all the items.

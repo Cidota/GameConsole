@@ -53,10 +53,11 @@ typedef enum sprite_type
     SNAKE_TAIL_RIGHT,
     SNAKE_TAIL_UP,
     SNAKE_TAIL_DOWN,
-    SNAKE_HEAD_DOWN_SOLO,
-    SNAKE_HEAD_UP_SOLO,
-    SNAKE_HEAD_RIGHT_SOLO,
-    SNAKE_HEAD_LEFT_SOLO
+    SNAKE_HEAD_SOLO_DOWN,
+    SNAKE_HEAD_SOLO_UP,
+    SNAKE_HEAD_SOLO_RIGHT,
+    SNAKE_HEAD_SOLO_LEFT,
+    SNAKE_APPLE
 } sprite_type;
 /**
  * @brief Get an image bitmap from the name.

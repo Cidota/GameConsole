@@ -53,11 +53,9 @@ void generateApple() {
 			cpt++;
 		}
 		if (cpt == newPos) {
-			addColorUpdate(i % map_size->x, i / map_size->x, tailleCaseTemp,
-					tailleCaseTemp, RED);
+			addSpriteUpdate(i % map_size->x, i / map_size->x, SNAKE_APPLE);
 			map[i]->type = APPLE;
 			map[i]->direction = NO_DIRECTION;
-
 			break;
 		}
 	}
@@ -286,15 +284,15 @@ sprite_type getSnakeTailSprite(directions direction){
 sprite_type getSnakeHeadSoloSprite(directions direction){
 		switch (direction){
 		case UP:
-			return SNAKE_HEAD_UP_SOLO;
+			return SNAKE_HEAD_SOLO_UP;
 		case RIGHT:
-			return SNAKE_HEAD_RIGHT_SOLO;
+			return SNAKE_HEAD_SOLO_RIGHT;
 		case DOWN:
-			return SNAKE_HEAD_DOWN_SOLO;
+			return SNAKE_HEAD_SOLO_DOWN;
 		case LEFT:
-			return SNAKE_HEAD_LEFT_SOLO;
+			return SNAKE_HEAD_SOLO_LEFT;
 		default:
-			return SNAKE_HEAD_DOWN_SOLO;
+			return SNAKE_HEAD_SOLO_DOWN;
 	}
 }
 
@@ -321,7 +319,6 @@ void update_snake_game() {
 	if (!(snake_tail->x == snake_head->x && snake_tail->y == snake_head->y)) {
 		direction = assertDirection(direction);
 	}
-	lastDir = direction;
 	getNextPosition(direction, snake_head, next_position);
 	int indexNextPos = getIndex(next_position);
 	int indexCurrentPos = getIndex(snake_head);
@@ -361,13 +358,18 @@ void update_snake_game() {
 		// If the snake size = 1, the previous position of the head should not be set as green.
 		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
-			addColorUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-					tailleCaseTemp, GREEN);
+			addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeBodySprite(lastDir,direction));
 		}
+		addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeTailSprite(lastDir,direction));
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
-		addColorUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, ORANGE);
+		// Snake len = 1, head should be round.
+		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSoloSprite(direction));
+		}
+		else{
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSprite(direction));
+		}
 	// If the next head position is an apple, 3 steps:
 	// 1. set the head as green.
 	// 2. move the head and set the new position as red.
@@ -376,12 +378,11 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		addColorUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, GREEN);
-		addColorUpdate(next_position->x, next_position->y, tailleCaseTemp,
-				tailleCaseTemp, ORANGE);
+		addSpriteUpdate(snake_head->x, snake_head->y, getSnakeBodySprite());
+		addSpriteUpdate(next_position->x, next_position->y, getSnakeHeadSprite());
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		generateApple();
 	}
+	lastDir = direction;
 }
