@@ -30,9 +30,18 @@
  **/
 typedef enum games
 {
-    NONE, /**< No game */
+    NONE,      /**< No game */
     SNAKE_GAME /**< Snake game */
 } games;
+
+/**
+ * @brief Different types for the items
+ */
+typedef enum itemtypes
+{
+    COLOR, 
+    BITMAP
+} itemtypes;
 
 /**
  * @brief Structure for positions
@@ -43,14 +52,21 @@ struct coordinate
     int y;
 };
 
-/**
- * @brief Structure of a sprite
- */
-struct sprite
+typedef union sprite
 {
-    struct coordinate position; /**< Top left corner of the sprite. */
-    struct coordinate size;     /**< Size of the sprite. */
-    enum colors sprite;          /**< Color of the sprite. */
+    enum colors color;
+    char* name;
+} sprite;
+
+/**
+ * @brief Structure of a item
+ */
+struct item
+{
+    struct coordinate position;   /**< Top left corner of the item. */
+    struct coordinate size;       /**< Size of the item. */
+    sprite item;           /**< Color of the item. */
+    enum itemtypes item_type; /**< Type of item */
 };
 
 /**
@@ -58,9 +74,9 @@ struct sprite
  */
 struct screen_updates
 {
-    unsigned int size;         /** Max size available for the sprites array*/
-    unsigned int currentIndex; /** Current position of the sprite array*/
-    struct sprite *sprites;    /** Sprite array */
+    unsigned int size;         /** Max size available for the items array*/
+    unsigned int currentIndex; /** Current position of the item array*/
+    struct item *items;    /** Sprite array */
 };
 
 void setRenderNonGameElementsTrue();
@@ -82,18 +98,18 @@ void init_game(games game);
 void update();
 
 /**
- * @brief Add a sprite/color to render next frame.
- * @param posX left corner of the sprite.
- * @param posY top corner of the sprite
- * @param sizeX width of the sprite.
- * @param sizeY height of the sprite.
- * @param sprite color/image of the sprite.
+ * @brief Add a item/color to render next frame.
+ * @param posX left corner of the item.
+ * @param posY top corner of the item
+ * @param sizeX width of the item.
+ * @param sizeY height of the item.
+ * @param color color of the item.
  **/
-void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, colors sprite);
+void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color);
 
 /**
  * @brief Reset the list of updates to render
- * @details Must be called after having render all the sprites.
+ * @details Must be called after having render all the items.
  **/
 void resetSpriteUpdate();
 

@@ -11,21 +11,24 @@ struct screen_updates *screen_updates;
 games currentGame = NONE;
 bool renderNonGameElements = true;
 
-void addSpriteUpdate(int posX, int posY, int sizeX, int sizeY, colors sprite) {
-	screen_updates->sprites[screen_updates->currentIndex].position.x = posX;
-	screen_updates->sprites[screen_updates->currentIndex].position.y = posY;
-	screen_updates->sprites[screen_updates->currentIndex].size.x = sizeX;
-	screen_updates->sprites[screen_updates->currentIndex].size.y = sizeY;
-	screen_updates->sprites[screen_updates->currentIndex].sprite = sprite;
+void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color) {
+	screen_updates->items[screen_updates->currentIndex].position.x = posX;
+	screen_updates->items[screen_updates->currentIndex].position.y = posY;
+	screen_updates->items[screen_updates->currentIndex].size.x = sizeX;
+	screen_updates->items[screen_updates->currentIndex].size.y = sizeY;
+	screen_updates->items[screen_updates->currentIndex].item_type = COLOR;
+	screen_updates->items[screen_updates->currentIndex].item.color = color;	
 	screen_updates->currentIndex += 1;
 }
+
 void resetSpriteUpdate() {
 	for (int i = 0; i < screen_updates->size; i++) {
-		screen_updates->sprites[i].position.x = 0;
-		screen_updates->sprites[i].position.y = 0;
-		screen_updates->sprites[i].size.x = 0;
-		screen_updates->sprites[i].size.y = 0;
-		screen_updates->sprites[i].sprite = BLACK;
+		screen_updates->items[i].position.x = 0;
+		screen_updates->items[i].position.y = 0;
+		screen_updates->items[i].size.x = 0;
+		screen_updates->items[i].size.y = 0;
+		screen_updates->items[i].item.color = BLACK;
+		screen_updates->items[i].item_type = COLOR;
 	}
 	screen_updates->currentIndex = 0;
 }
@@ -54,9 +57,9 @@ void init_game(games game) {
 		screen_updates->size = 0;
 		break;
 	}
-	screen_updates->sprites = malloc(
-			screen_updates->size * sizeof(struct sprite));
-	if (screen_updates->sprites == NULL) {
+	screen_updates->items = malloc(
+			screen_updates->size * sizeof(struct item));
+	if (screen_updates->items == NULL) {
 		logError("Memory limit exceeded.\n");
 	}
 	switch (currentGame) {
@@ -119,12 +122,23 @@ void render(){
 	}
 	if (screen_updates != NULL && screen_updates->currentIndex != 0) {
 		for (int i = 0; i < screen_updates->currentIndex ; i++) {
-			drawRectangle(
-			offset + (screen_updates->sprites[i].position.x * tailleCaseTemp),
-			tailleCaseTemp * screen_updates->sprites[i].position.y,
-					screen_updates->sprites[i].size.x,
-					screen_updates->sprites[i].size.y,
-					screen_updates->sprites[i].sprite);
+			switch(screen_updates->items[i].item_type){
+				case COLOR:
+					drawRectangle(
+					offset + (screen_updates->items[i].position.x * tailleCaseTemp),
+					tailleCaseTemp * screen_updates->items[i].position.y,
+							screen_updates->items[i].size.x,
+							screen_updates->items[i].size.y,
+							screen_updates->items[i].item.color);
+					break;
+				case BITMAP:
+				//drawBitmap(
+				//	offset + (screen_updates->items[i].position.x * tailleCaseTemp),
+				//  tailleCaseTemp * screen_updates->items[i].position.y, uint y, uint height, uint width, u16 bitmap[]);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }
