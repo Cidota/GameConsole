@@ -9,7 +9,6 @@
 #define __IMAGE_H__
 
 #include "common.h"
-#include "imageBase.h"
 #include "snake_game_image.h"
 
 #define BM_BLACK   0x0000
@@ -37,42 +36,19 @@ typedef enum colors
     PINK = BM_PINK
 } colors;
 
-
-typedef enum sprite_type
-{   
-    SNAKE_HEAD_UP,
-    SNAKE_HEAD_DOWN,
-    SNAKE_HEAD_RIGHT,
-    SNAKE_HEAD_LEFT,
-    SNAKE_BODY_CURVE_UP_LEFT,
-    SNAKE_BODY_CURVE_UP_RIGHT,
-    SNAKE_BODY_CURVE_DOWN_LEFT,
-    SNAKE_BODY_CURVE_DOWN_RIGHT,
-    SNAKE_BODY_HORIZONTAL,
-    SNAKE_BODY_VERTICAL,
-    SNAKE_TAIL_LEFT,
-    SNAKE_TAIL_RIGHT,
-    SNAKE_TAIL_UP,
-    SNAKE_TAIL_DOWN,
-    SNAKE_HEAD_SOLO_DOWN,
-    SNAKE_HEAD_SOLO_UP,
-    SNAKE_HEAD_SOLO_RIGHT,
-    SNAKE_HEAD_SOLO_LEFT,
-    SNAKE_APPLE
-} sprite_type;
 /**
  * @brief Get an image bitmap from the name.
  **/
-u16 *getImage(char *name);
+u16 *getImage(sprite_type sprite);
 
 /**
  * @brief Get an image height from the name.
  **/
-uint getImageHeight(char *name);
+uint getImageHeight(sprite_type sprite);
 
 /**
  * @brief Get an image width from the name.
  **/
-uint getImageWidth(char *name);
+uint getImageWidth(sprite_type sprite);
 
 #endif // __IMAGE_H__

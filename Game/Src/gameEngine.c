@@ -143,8 +143,8 @@ void render(){
 					break;
 				case BITMAP:
 				drawBitmap(
-					offset + (screen_updates->items[i].position.x * tailleCaseTemp),
-					tailleCaseTemp * screen_updates->items[i].position.y,
+					offset + (screen_updates->items[i].position.x * getImageWidth(screen_updates->items[i].item.sprite)),
+					getImageHeight(screen_updates->items[i].item.sprite) * screen_updates->items[i].position.y,
 							screen_updates->items[i].size.x,
 							screen_updates->items[i].size.y,
 							 getImage(screen_updates->items[i].item.sprite));

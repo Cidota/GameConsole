@@ -167,18 +167,14 @@ void reset_snake_game() {
 	logDebug("***Game over.***\n");
 	logDebug("*** Reseting Snake Game***\n");
 	isGameRunning = false;
-	// temp indicator that game is over
+	// temp indicator that game is over TODO: Remove asap
 	drawRectangle(0, 0, 160, 320, RED);
 	// Reset all the values. This function consider that map_size is well defined and that the memory is allocated.
 	 init_snake_variables();
 	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
 }
 
-void init_render(){
-	addColorUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-			tailleCaseTemp, ORANGE);
-	generateApple();
-}
+
 
 void render_snake_UI(){
 	drawRectangle(0, 0, 160, 320, BLACK);
@@ -258,10 +254,13 @@ sprite_type getSnakeBodySprite(directions from, directions to){
 			return SNAKE_BODY_CURVE_UP_LEFT;
 		}		
 		else if ((from ==LEFT && to == UP) || (from == DOWN && to == RIGHT)){
-			return SNAKE_BODY_CURVE_DOWN_RIGHT;
+			return SNAKE_BODY_CURVE_UP_RIGHT;
 		}
 		else{
 			logDebug("Couldn't find the curve of the snake\n");
+			// This was added to remove a warning. I chose apple as it is the most
+			// different from what was supposed to be here and we are more likely to realise there is an error.
+			return SNAKE_APPLE;
 		}
 	}
 }
@@ -278,6 +277,9 @@ sprite_type getSnakeTailSprite(directions direction){
 			return SNAKE_TAIL_RIGHT;
 		default:
 			logDebug("Couldn't render the tail of the snake.\n");
+			// This was added to remove a warning. I chose apple as it is the most
+			// different from what was supposed to be here and we are more likely to realise there is an error.
+			return SNAKE_APPLE;
 	}
 }
 
@@ -296,6 +298,11 @@ sprite_type getSnakeHeadSoloSprite(directions direction){
 	}
 }
 
+void init_render(){
+	addSpriteUpdate(snake_head->x, snake_head->y, getSnakeHeadSoloSprite(lastDir));
+	generateApple();
+}
+
 void update_snake_game() {
 	directions direction = acceptBufferedDirction();
 	// "Press a button to start" part.
@@ -306,8 +313,8 @@ void update_snake_game() {
 		else{
 			setRenderNonGameElementsTrue();
 			isGameRunning = true;
-			init_render();
 			lastDir = direction;
+			init_render();
 			return;
 		}
 	}
@@ -319,6 +326,11 @@ void update_snake_game() {
 	if (!(snake_tail->x == snake_head->x && snake_tail->y == snake_head->y)) {
 		direction = assertDirection(direction);
 	}
+	// I added these to help me solve the problem of the tail being draw in the wrong pos.
+	// Maybe they can be used to also simplify the code a bit.
+	int indexCurrentTailPos = getIndex(snake_tail);
+	getNextPosition(map[indexCurrentTailPos]->direction, snake_tail, next_position);
+	int indexNextTailPos = getIndex(next_position);
 	getNextPosition(direction, snake_head, next_position);
 	int indexNextPos = getIndex(next_position);
 	int indexCurrentPos = getIndex(snake_head);
@@ -358,18 +370,16 @@ void update_snake_game() {
 		// If the snake size = 1, the previous position of the head should not be set as green.
 		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
-			addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeBodySprite(lastDir,direction));
+			addSpriteUpdate(snake_head->x,snake_head->y,getSnakeBodySprite(lastDir,direction));
 		}
-		addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeTailSprite(lastDir,direction));
+		addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeTailSprite(map[indexNextTailPos]->direction));
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		// Snake len = 1, head should be round.
-		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
+		if (next_position->x == snake_tail->x && next_position->y == snake_tail->y)
 			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSoloSprite(direction));
-		}
-		else{
+		else
 			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSprite(direction));
-		}
 	// If the next head position is an apple, 3 steps:
 	// 1. set the head as green.
 	// 2. move the head and set the new position as red.
@@ -378,8 +388,12 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		addSpriteUpdate(snake_head->x, snake_head->y, getSnakeBodySprite());
-		addSpriteUpdate(next_position->x, next_position->y, getSnakeHeadSprite());
+
+		if (snake_head->x == snake_tail->x && snake_head->y == snake_tail->y)
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeTailSprite(direction));
+		else
+			addSpriteUpdate(snake_head->x, snake_head->y, getSnakeBodySprite(lastDir,direction));
+		addSpriteUpdate(next_position->x, next_position->y, getSnakeHeadSprite(direction));
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		generateApple();

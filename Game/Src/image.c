@@ -7,14 +7,13 @@
 #include "image.h"
 
 #include <stdlib.h>
-#include <string.h>
 
 u16 snakeTile[1156];
 
-u16* getImage(char *name) {
+u16* getImage(sprite_type sprite) {
 	int c;
 	for (c = 0; c < snakeTilemap.count; ++c) {
-		if (strcmp(snakeTilemap.tiles[c].name, name) == 0)
+		if (snakeTilemap.tiles[c].sprite == sprite)
 			break;
 	}
 
@@ -33,13 +32,19 @@ u16* getImage(char *name) {
 	return &snakeTile[0];
 }
 
-uint getImageHeight(char *name) {
-	return SNAKE_TILE_HEIGHT;
+uint getImageHeight(sprite_type sprite) {
+	if (sprite <= 18)
+		return SNAKE_TILE_HEIGHT;
+	else
+		return 0;
 }
 
 /**
  * @brief Get an image width from the name.
  **/
-uint getImageWidth(char *name) {
-	return SNAKE_TILE_WIDTH;
+uint getImageWidth(sprite_type sprite) {
+	if (sprite <= 18)
+		return SNAKE_TILE_WIDTH;
+	else
+		return 0;
 }
