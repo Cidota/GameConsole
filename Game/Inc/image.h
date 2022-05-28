@@ -9,6 +9,7 @@
 #define __IMAGE_H__
 
 #include "common.h"
+#include "imageBase.h"
 #include "snake_game_image.h"
 
 #define BM_BLACK   0x0000
@@ -44,11 +45,11 @@ u16 *getImage(char *name);
 /**
  * @brief Get an image height from the name.
  **/
-u16 *getImageHeight(char *name);
+uint getImageHeight(char *name);
 
 /**
  * @brief Get an image width from the name.
  **/
-u16 *getImageWidth(char *name);
+uint getImageWidth(char *name);
 
 #endif // __IMAGE_H__

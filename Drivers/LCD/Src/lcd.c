@@ -110,6 +110,21 @@ void LCDSetWindow(u16 xStart, u16 yStart, u16 xEnd, u16 yEnd) {
 	LCDWriteCommand(LCD_WRITE_GRAM_CMD);
 }
 
+void LCDBitmap(u16 sx, u16 sy, u16 ex, u16 ey, u16 *bitmap) {
+	u16 i, j;
+
+	u16 width = ex - sx + 1;
+	u16 height = ey - sy + 1;
+	LCDSetWindow(sx, sy, ex, ey);
+
+	for (i = 0; i < height; i++) {
+		for (j = 0; j < width; j++)
+			LCDWrite16Bit(bitmap[j + (i*width)]);
+	}
+
+	LCDSetWindow(0, 0, LCD_H - 1, LCD_W - 1);
+}
+
 void LCDFill(u16 sx, u16 sy, u16 ex, u16 ey, u16 color) {
 	u16 i, j;
 
