@@ -24,7 +24,7 @@
 #define BM_PINK    0xF4F4
 #define BM_ORANGE  0xE4E4
 
-typedef enum color
+typedef enum colors
 {
     BLACK = BM_BLACK,
     WHITE = BM_WHITE,
@@ -34,21 +34,21 @@ typedef enum color
     GREEN = BM_GREEN,
     ORANGE = BM_ORANGE,
     PINK = BM_PINK
-} color;
+} colors;
 
 /**
  * @brief Get an image bitmap from the name.
  **/
-u16 *getImage(char *name);
+u16 *getImage(sprite_type sprite);
 
 /**
  * @brief Get an image height from the name.
  **/
-u16 *getImageHeight(char *name);
+uint getImageHeight(sprite_type sprite);
 
 /**
  * @brief Get an image width from the name.
  **/
-u16 *getImageWidth(char *name);
+uint getImageWidth(sprite_type sprite);
 
 #endif // __IMAGE_H__

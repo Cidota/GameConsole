@@ -40,6 +40,7 @@ void LCDWrite16Bit(u16 data);
 void LCDWriteCommand(u8 data);
 void LCDWriteData(u8 data);
 void LCDSetWindow(u16 xStart, u16 yStart, u16 xEnd, u16 yEnd);
+void LCDBitmap(u16 sx, u16 sy, u16 ex, u16 ey, u16* bitmap);
 void LCDFill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color);
 void LCDClear(u16 Color);
 void LCDReset();

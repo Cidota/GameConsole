@@ -53,11 +53,9 @@ void generateApple() {
 			cpt++;
 		}
 		if (cpt == newPos) {
-			addSpriteUpdate(i % map_size->x, i / map_size->x, tailleCaseTemp,
-					tailleCaseTemp, RED);
+			addSpriteUpdate(i % map_size->x, i / map_size->x, SNAKE_APPLE);
 			map[i]->type = APPLE;
 			map[i]->direction = NO_DIRECTION;
-
 			break;
 		}
 	}
@@ -169,18 +167,14 @@ void reset_snake_game() {
 	logDebug("***Game over.***\n");
 	logDebug("*** Reseting Snake Game***\n");
 	isGameRunning = false;
-	// temp indicator that game is over
+	// temp indicator that game is over TODO: Remove asap
 	drawRectangle(0, 0, 160, 320, RED);
 	// Reset all the values. This function consider that map_size is well defined and that the memory is allocated.
 	 init_snake_variables();
 	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
 }
 
-void init_render(){
-	addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-			tailleCaseTemp, ORANGE);
-	generateApple();
-}
+
 
 void render_snake_UI(){
 	drawRectangle(0, 0, 160, 320, BLACK);
@@ -223,6 +217,92 @@ void init_snake_game(int x, int y) {
 	init_snake_variables();
 }
 
+sprite_type getSnakeHeadSprite(directions direction){
+	switch (direction){
+		case UP:
+			return SNAKE_HEAD_UP;
+		case RIGHT:
+			return SNAKE_HEAD_RIGHT;
+		case DOWN:
+			return SNAKE_HEAD_DOWN;
+		case LEFT:
+			return SNAKE_HEAD_LEFT;
+		default:
+			return SNAKE_HEAD_DOWN;
+	}
+}
+
+// From is the previous direction choosen, to is the next one.
+// Exemple : If from = UP and to = RIGHT, the snake is moving from up to right.
+sprite_type getSnakeBodySprite(directions from, directions to){
+	if (from == to){
+		if (from == RIGHT || from == LEFT){
+			return SNAKE_BODY_HORIZONTAL;
+		}
+		else{
+			return SNAKE_BODY_VERTICAL;
+		}
+	}
+	else{
+		if ((from == UP && to == RIGHT) || (from == LEFT && to == DOWN)){
+			return SNAKE_BODY_CURVE_DOWN_RIGHT;
+		}
+		else if ((from ==RIGHT && to == DOWN) || (from == UP && to == LEFT)){
+			return SNAKE_BODY_CURVE_DOWN_LEFT;
+		}		
+		else if ((from ==DOWN && to == LEFT) || (from == RIGHT && to == UP)){
+			return SNAKE_BODY_CURVE_UP_LEFT;
+		}		
+		else if ((from ==LEFT && to == UP) || (from == DOWN && to == RIGHT)){
+			return SNAKE_BODY_CURVE_UP_RIGHT;
+		}
+		else{
+			logDebug("Couldn't find the curve of the snake\n");
+			// This was added to remove a warning. I chose apple as it is the most
+			// different from what was supposed to be here and we are more likely to realise there is an error.
+			return SNAKE_APPLE;
+		}
+	}
+}
+
+sprite_type getSnakeTailSprite(directions direction){
+	switch(direction){
+		case UP:
+			return SNAKE_TAIL_UP;
+		case DOWN:
+			return SNAKE_TAIL_DOWN;
+		case LEFT:
+			return SNAKE_TAIL_LEFT;
+		case RIGHT:
+			return SNAKE_TAIL_RIGHT;
+		default:
+			logDebug("Couldn't render the tail of the snake.\n");
+			// This was added to remove a warning. I chose apple as it is the most
+			// different from what was supposed to be here and we are more likely to realise there is an error.
+			return SNAKE_APPLE;
+	}
+}
+
+sprite_type getSnakeHeadSoloSprite(directions direction){
+		switch (direction){
+		case UP:
+			return SNAKE_HEAD_SOLO_UP;
+		case RIGHT:
+			return SNAKE_HEAD_SOLO_RIGHT;
+		case DOWN:
+			return SNAKE_HEAD_SOLO_DOWN;
+		case LEFT:
+			return SNAKE_HEAD_SOLO_LEFT;
+		default:
+			return SNAKE_HEAD_SOLO_DOWN;
+	}
+}
+
+void init_render(){
+	addSpriteUpdate(snake_head->x, snake_head->y, getSnakeHeadSoloSprite(lastDir));
+	generateApple();
+}
+
 void update_snake_game() {
 	directions direction = acceptBufferedDirction();
 	// "Press a button to start" part.
@@ -233,8 +313,8 @@ void update_snake_game() {
 		else{
 			setRenderNonGameElementsTrue();
 			isGameRunning = true;
-			init_render();
 			lastDir = direction;
+			init_render();
 			return;
 		}
 	}
@@ -246,7 +326,11 @@ void update_snake_game() {
 	if (!(snake_tail->x == snake_head->x && snake_tail->y == snake_head->y)) {
 		direction = assertDirection(direction);
 	}
-	lastDir = direction;
+	// I added these to help me solve the problem of the tail being draw in the wrong pos.
+	// Maybe they can be used to also simplify the code a bit.
+	int indexCurrentTailPos = getIndex(snake_tail);
+	getNextPosition(map[indexCurrentTailPos]->direction, snake_tail, next_position);
+	int indexNextTailPos = getIndex(next_position);
 	getNextPosition(direction, snake_head, next_position);
 	int indexNextPos = getIndex(next_position);
 	int indexCurrentPos = getIndex(snake_head);
@@ -268,7 +352,7 @@ void update_snake_game() {
 				next_position);
 		map[indexSnakeTail]->direction = NO_DIRECTION;
 		map[indexSnakeTail]->type = VOID;
-		addSpriteUpdate(snake_tail->x, snake_tail->y, tailleCaseTemp,
+		addColorUpdate(snake_tail->x, snake_tail->y, tailleCaseTemp,
 				tailleCaseTemp, WHITE);
 		// size = 1, tail should be in the same spot as the head.
 		if (snake_tail->x == snake_head->x && snake_tail->y == snake_head->y) {
@@ -286,13 +370,16 @@ void update_snake_game() {
 		// If the snake size = 1, the previous position of the head should not be set as green.
 		// Otherwise the previous position of the head set as red should now be green.
 		if (!(next_position->x == snake_tail->x && next_position->y == snake_tail->y)){
-			addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-					tailleCaseTemp, GREEN);
+			addSpriteUpdate(snake_head->x,snake_head->y,getSnakeBodySprite(lastDir,direction));
 		}
+		addSpriteUpdate(snake_tail->x,snake_tail->y,getSnakeTailSprite(map[indexNextTailPos]->direction));
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
-		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, ORANGE);
+		// Snake len = 1, head should be round.
+		if (next_position->x == snake_tail->x && next_position->y == snake_tail->y)
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSoloSprite(direction));
+		else
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeHeadSprite(direction));
 	// If the next head position is an apple, 3 steps:
 	// 1. set the head as green.
 	// 2. move the head and set the new position as red.
@@ -301,12 +388,15 @@ void update_snake_game() {
 		map[indexCurrentPos]->direction = direction;
 		map[indexNextPos]->direction = NO_DIRECTION;
 		map[indexNextPos]->type = SNAKE;
-		addSpriteUpdate(snake_head->x, snake_head->y, tailleCaseTemp,
-				tailleCaseTemp, GREEN);
-		addSpriteUpdate(next_position->x, next_position->y, tailleCaseTemp,
-				tailleCaseTemp, ORANGE);
+
+		if (snake_head->x == snake_tail->x && snake_head->y == snake_tail->y)
+			addSpriteUpdate(snake_head->x, snake_head->y,getSnakeTailSprite(direction));
+		else
+			addSpriteUpdate(snake_head->x, snake_head->y, getSnakeBodySprite(lastDir,direction));
+		addSpriteUpdate(next_position->x, next_position->y, getSnakeHeadSprite(direction));
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		generateApple();
 	}
+	lastDir = direction;
 }

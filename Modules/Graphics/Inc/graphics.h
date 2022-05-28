@@ -84,6 +84,6 @@ void drawRectangle(uint x, uint y, uint height, uint width, u16 color);
  * @pre @p x < display width
  * @pre @p y < display height
  **/
-void drawBitmap(uint x, uint y, uint height, uint width, u16 bitmap[]);
+void drawBitmap(uint x, uint y, uint height, uint width, u16 *bitmap);
 
 #endif // __GRAPHICS_H__

@@ -17,9 +17,9 @@ uint getScreenWidth(){
 }
 
 void drawRectangle(uint x, uint y, uint height, uint width, u16 color){
-	LCDFill(x, y, x+height, y+width, color);
+	LCDFill(x, y, x+height-1, y+width-1, color);
 }
 
-void drawBitmap(uint x, uint y, uint height, uint width, u16 bitmap[]){
-
+void drawBitmap(uint x, uint y, uint height, uint width, u16 *bitmap){
+	LCDBitmap(x, y, x+width-1, y+height-1, bitmap);
 }
