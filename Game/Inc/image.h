@@ -25,7 +25,7 @@
 #define BM_PINK    0xF4F4
 #define BM_ORANGE  0xE4E4
 
-typedef enum color
+typedef enum colors
 {
     BLACK = BM_BLACK,
     WHITE = BM_WHITE,
@@ -35,8 +35,31 @@ typedef enum color
     GREEN = BM_GREEN,
     ORANGE = BM_ORANGE,
     PINK = BM_PINK
-} color;
+} colors;
 
+
+typedef enum sprite_type
+{   
+    SNAKE_HEAD_UP,
+    SNAKE_HEAD_DOWN,
+    SNAKE_HEAD_RIGHT,
+    SNAKE_HEAD_LEFT,
+    SNAKE_BODY_CURVE_UP_LEFT,
+    SNAKE_BODY_CURVE_UP_RIGHT,
+    SNAKE_BODY_CURVE_DOWN_LEFT,
+    SNAKE_BODY_CURVE_DOWN_RIGHT,
+    SNAKE_BODY_HORIZONTAL,
+    SNAKE_BODY_VERTICAL,
+    SNAKE_TAIL_LEFT,
+    SNAKE_TAIL_RIGHT,
+    SNAKE_TAIL_UP,
+    SNAKE_TAIL_DOWN,
+    SNAKE_HEAD_SOLO_DOWN,
+    SNAKE_HEAD_SOLO_UP,
+    SNAKE_HEAD_SOLO_RIGHT,
+    SNAKE_HEAD_SOLO_LEFT,
+    SNAKE_APPLE
+} sprite_type;
 /**
  * @brief Get an image bitmap from the name.
  **/
