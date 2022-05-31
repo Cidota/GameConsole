@@ -17,7 +17,10 @@
  **/
 typedef unsigned int uint;
 
-typedef uint8_t  u8;
+/**
+ * @brief Standard unsigned char type.
+ **/
+typedef uint8_t u8;
 
 /**
  * @brief Standard unsigned short type.

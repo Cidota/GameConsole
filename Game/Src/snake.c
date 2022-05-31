@@ -8,6 +8,10 @@
 #include "snake.h"
 #include "gameEngine.h"
 
+const struct coordinate score_text_position = { .x = 1, .y = 2};
+const struct coordinate pab_text_position = { .x = 0, .y = 180};
+const struct coordinate go_text_position = { .x = 0, .y = 80};
+
 struct coordinate *snake_head;
 struct coordinate *snake_tail;
 struct coordinate *apple;
@@ -17,7 +21,13 @@ struct snake_case **map;
 directions lastDir;
 int availablePositions = -1; /**< Available positions for apples */
 int score = 0;
+bool isReset = false;
 bool isGameRunning = false;
+u32 timeReset = 0;
+
+uint HighestScore = 0;
+uint HigherScore = 0;
+uint HighScore = 0;
 
 directions getOppositeDirection(directions d) {
 	switch (d) {
@@ -150,6 +160,7 @@ void destroy_snake_game() {
 
 void init_snake_variables(){
 	isGameRunning = false;
+	score = 0;
 	snake_head->x = map_size->x / 2;
 	snake_head->y = map_size->y / 2;
 	snake_tail->x = snake_head->x;
@@ -167,55 +178,62 @@ void reset_snake_game() {
 	logDebug("***Game over.***\n");
 	logDebug("*** Reseting Snake Game***\n");
 	isGameRunning = false;
-	// temp indicator that game is over TODO: Remove asap
-	drawRectangle(0, 0, 160, 320, RED);
+	isReset = true;
+
+	// Add score to High score
+	if(score > HighScore)
+		HighScore = score;
+	if(HighScore > HigherScore){
+		int tmp = HighScore;
+		HighScore = HigherScore;
+		HigherScore = tmp;
+	}
+	if(HigherScore > HighestScore){
+		int tmp = HighestScore;
+		HighestScore = HigherScore;
+		HigherScore = tmp;
+	}
+
 	// Reset all the values. This function consider that map_size is well defined and that the memory is allocated.
-	 init_snake_variables();
-	// TODO: mettre un délai après le reset pour que le joueur n'appui pas accidentilement.
+	init_snake_variables();
+	setRenderNonGameElementsTrue();
+
+	timeReset = getTimeMs();
 }
 
 
 
 void render_snake_UI(){
-	drawRectangle(0, 0, 160, 320, BLACK);
+	if(!isGameRunning){
+		if(!isReset){ // initial background for score and game over
+			drawRectangle(0, 0, 160, getScreenHeight() - getImageHeight(SNAKE_TEXT_PAB), BLACK);
+		}else{ // draw game over if we are in a reset state
+			drawBitmap(go_text_position.x, go_text_position.y, getImageHeight(SNAKE_TEXT_GO), getImageWidth(SNAKE_TEXT_GO), getImage(SNAKE_TEXT_GO));
+		}// draw press another button text
+		drawBitmap(pab_text_position.x, pab_text_position.y, getImageHeight(SNAKE_TEXT_PAB), getImageWidth(SNAKE_TEXT_PAB), getImage(SNAKE_TEXT_PAB));
+	}else{ // Draw high scores if we are in game
+		drawRectangle(go_text_position.x, go_text_position.y, 160, 320 - 74, BLACK);
+		drawBitmap(pab_text_position.x, pab_text_position.y, getImageHeight(SNAKE_TEXT_HS), getImageWidth(SNAKE_TEXT_HS), getImage(SNAKE_TEXT_HS));
+		drawNumber(pab_text_position.x, pab_text_position.y + 35, HighestScore, BLACK, WHITE);
+		drawNumber(pab_text_position.x, pab_text_position.y + (35 * 2), HigherScore, BLACK, WHITE);
+		drawNumber(pab_text_position.x, pab_text_position.y + (35 * 3), HighScore, BLACK, WHITE);
+	}
+
+	// edges of map (right and bottom)
 	drawRectangle(480 - 14, 0, 14, 320, BLACK);
 	drawRectangle(160, 320 - 14, 480 - 160, 14, BLACK);
+
+	if(!isReset){
+		drawRectangle(0, 0, 160, 74, BLACK);
+		drawBitmap(score_text_position.x, score_text_position.y, getImageHeight(SNAKE_TEXT_SCORE), getImageWidth(SNAKE_TEXT_SCORE), getImage(SNAKE_TEXT_SCORE));
+		drawNumber(1, 4 + getImageHeight(SNAKE_TEXT_SCORE), 0, BLACK, WHITE);
+	}
 }
 
 void render_snake_Background(){
-	drawRectangle(
-		offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
+	drawRectangle(offset,0,tailleCaseTemp*9,tailleCaseTemp*9, WHITE);
 }
 
-void init_snake_game(int x, int y) {
-	snake_head = malloc(sizeof(struct coordinate));
-	snake_tail = malloc(sizeof(struct coordinate));
-	map_size = malloc(sizeof(struct coordinate));
-	apple = malloc(sizeof(struct coordinate));
-	next_position = malloc(sizeof(struct coordinate));
-	if (snake_head == NULL || snake_tail == NULL || map_size == NULL
-			|| apple == NULL || next_position == NULL) {
-		logError("Memory limit exceeded.\n");
-		destroy_snake_game();
-	}
-	map_size->x = x;
-	map_size->y = y;
-	map = malloc(sizeof(struct snake_case*) * map_size->x * map_size->y);
-	if (map == NULL) {
-		logError("Memory limit exceeded.\n");
-		destroy_snake_game();
-	}
-	for (int i = 0; i < map_size->x * map_size->y; i++) {
-		map[i] = malloc(sizeof(struct snake_case));
-		if (map[i] == NULL) {
-			logError("Memory limit exceeded.\n");
-			destroy_snake_game();
-		}
-	}	
-	srand(LL_RNG_ReadRandData32(RNG));
-	lastDir = RIGHT;
-	init_snake_variables();
-}
 
 sprite_type getSnakeHeadSprite(directions direction){
 	switch (direction){
@@ -299,8 +317,42 @@ sprite_type getSnakeHeadSoloSprite(directions direction){
 }
 
 void init_render(){
+	// Added this as easiest way to clear map only before starting game
+	addColorUpdate(0, 0, tailleCaseTemp * 9, tailleCaseTemp * 9, WHITE);
+
 	addSpriteUpdate(snake_head->x, snake_head->y, getSnakeHeadSoloSprite(lastDir));
 	generateApple();
+}
+
+void init_snake_game(int x, int y) {
+	snake_head = malloc(sizeof(struct coordinate));
+	snake_tail = malloc(sizeof(struct coordinate));
+	map_size = malloc(sizeof(struct coordinate));
+	apple = malloc(sizeof(struct coordinate));
+	next_position = malloc(sizeof(struct coordinate));
+	if (snake_head == NULL || snake_tail == NULL || map_size == NULL
+			|| apple == NULL || next_position == NULL) {
+		logError("Memory limit exceeded.\n");
+		destroy_snake_game();
+	}
+	map_size->x = x;
+	map_size->y = y;
+	map = malloc(sizeof(struct snake_case*) * map_size->x * map_size->y);
+	if (map == NULL) {
+		logError("Memory limit exceeded.\n");
+		destroy_snake_game();
+	}
+	for (int i = 0; i < map_size->x * map_size->y; i++) {
+		map[i] = malloc(sizeof(struct snake_case));
+		if (map[i] == NULL) {
+			logError("Memory limit exceeded.\n");
+			destroy_snake_game();
+		}
+	}
+	srand(LL_RNG_ReadRandData32(RNG));
+	lastDir = RIGHT;
+	init_snake_variables();
+	init_render();
 }
 
 void update_snake_game() {
@@ -311,10 +363,17 @@ void update_snake_game() {
 			return;
 		}
 		else{
+			if(isReset){ // if we need to reset then check if the reset timer has completed
+				if(getTimeMs() - timeReset < 2000){
+					return;
+				}else{// if it has then render the apple and snake now
+					init_render();
+					isReset = false;
+				}
+			}
 			setRenderNonGameElementsTrue();
 			isGameRunning = true;
 			lastDir = direction;
-			init_render();
 			return;
 		}
 	}
@@ -397,6 +456,10 @@ void update_snake_game() {
 		snake_head->x = next_position->x;
 		snake_head->y = next_position->y;
 		generateApple();
+
+		// update score
+		score++;
+		addNumberUpdate(1, score_text_position.y + getImageHeight(SNAKE_TEXT_SCORE) + 2, score);
 	}
 	lastDir = direction;
 }

@@ -7,9 +7,34 @@
 
 #include "gameEngine.h"
 
+#define SNAKE_NUMBER_OF_UPDATES_ALLOWED 4
+
 struct screen_updates *screen_updates;
 games currentGame = NONE;
 bool renderNonGameElements = true;
+
+void addNumberUpdate(int posX, int posY, int number){
+	switch(currentGame){
+		case SNAKE_GAME:
+			if(screen_updates->currentIndex >= SNAKE_NUMBER_OF_UPDATES_ALLOWED){
+				logError("[addNumberUpdate] Too many things being added to screen updates: index = %u, x = %d, y = %d, number = %d\n",
+							screen_updates->currentIndex, posX, posY, number);
+				return;
+			}else{
+				screen_updates->items[screen_updates->currentIndex].position.x = posX;
+				screen_updates->items[screen_updates->currentIndex].position.y = posY;
+				screen_updates->items[screen_updates->currentIndex].size.x = 0;
+				screen_updates->items[screen_updates->currentIndex].size.y = 0;
+				screen_updates->items[screen_updates->currentIndex].item_type = NUMBER;
+				screen_updates->items[screen_updates->currentIndex].item.number = number;
+				screen_updates->currentIndex += 1;
+			}
+			break;
+		default:
+			logError("[addNumberUpdate] Cannot find current game\n");
+			break;
+	}
+}
 
 void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color) {
 	screen_updates->items[screen_updates->currentIndex].position.x = posX;
@@ -61,7 +86,7 @@ void init_game(games game) {
 	screen_updates->currentIndex = 0;
 	switch (currentGame) {
 	case SNAKE_GAME:
-		screen_updates->size = 4;
+		screen_updates->size = SNAKE_NUMBER_OF_UPDATES_ALLOWED;
 		break;
 	default:
 		screen_updates->size = 0;
@@ -123,7 +148,7 @@ void render(){
 		switch (currentGame) {
 		case SNAKE_GAME:
 			render_snake_UI();
-			render_snake_Background();
+			//render_snake_Background();
 			break;
 		default:
 			break;
@@ -148,6 +173,10 @@ void render(){
 							screen_updates->items[i].size.x,
 							screen_updates->items[i].size.y,
 							 getImage(screen_updates->items[i].item.sprite));
+					break;
+				case NUMBER:
+					drawNumber(screen_updates->items[i].position.x, screen_updates->items[i].position.y,
+								screen_updates->items[i].item.number, BLACK, WHITE);
 					break;
 				default:
 					break;
