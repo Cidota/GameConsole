@@ -9,10 +9,13 @@
 #define __GRAPHICS_H__
 
 #include <string.h>
-#include "image.h"
+
 #include "common.h"
 #include "lcd.h"
+#include "log.h"
 
+#define CHARACTER_WIDTH 20
+#define CHARACTER_HEIGHT 33
 
 /**
  * @brief Get the screen height.
@@ -75,7 +78,7 @@ void drawRectangle(uint x, uint y, uint height, uint width, u16 color);
 
 /**
  * @brief Draw a bitmap image.
- * @details The rectangle's top left corner is the point (x, y).
+ * @details The images's top left corner is the point (x, y).
  * @param x the x-coordinate of the top left corner of the image
  * @param y the y-coordinate of the top left corner of the image
  * @param height the height of the image
@@ -85,5 +88,17 @@ void drawRectangle(uint x, uint y, uint height, uint width, u16 color);
  * @pre @p y < display height
  **/
 void drawBitmap(uint x, uint y, uint height, uint width, u16 *bitmap);
+
+/**
+ * @brief Draw number.
+ * @param x the x-coordinate of the top left corner of the number
+ * @param y the y-coordinate of the top left corner of the number
+ * @param number the number to draw
+ * @param backgroundColor the background color of the number
+ * @param numberColor the color of the number
+ * @pre @p x < display width
+ * @pre @p y < display height
+ **/
+void drawNumber(uint x, uint y, uint number, u16 backgroundColor, u16 numberColor);
 
 #endif // __GRAPHICS_H__

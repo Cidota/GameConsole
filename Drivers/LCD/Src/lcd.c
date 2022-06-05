@@ -122,7 +122,7 @@ void LCDBitmap(u16 sx, u16 sy, u16 ex, u16 ey, u16 *bitmap) {
 			LCDWrite16Bit(bitmap[j + (i*width)]);
 	}
 
-	LCDSetWindow(0, 0, LCD_H - 1, LCD_W - 1);
+	LCDSetWindow(0, 0, LCD_W - 1, LCD_H - 1);
 }
 
 void LCDFill(u16 sx, u16 sy, u16 ex, u16 ey, u16 color) {
@@ -136,11 +136,13 @@ void LCDFill(u16 sx, u16 sy, u16 ex, u16 ey, u16 color) {
 		for (j = 0; j < width; j++)
 			LCDWrite16Bit(color);
 	}
+
+	LCDSetWindow(0, 0, LCD_W - 1, LCD_H - 1);
 }
 
 void LCDClear(u16 Color) {
 	uint i;
-	LCDSetWindow(0, 0, LCD_H - 1, LCD_W - 1);
+	LCDSetWindow(0, 0, LCD_W - 1, LCD_H - 1);
 	for (i = 0; i < LCD_W * LCD_H; i++)
 		LCDWrite16Bit(Color);
 

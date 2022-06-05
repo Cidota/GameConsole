@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "snake_game_image.h"
+#include "log.h"
 
 #define BM_BLACK   0x0000
 #define BM_BLUE    0x1818

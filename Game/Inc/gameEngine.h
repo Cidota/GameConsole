@@ -40,7 +40,8 @@ typedef enum games
 typedef enum itemtypes
 {
     COLOR, 
-    BITMAP
+    BITMAP,
+	NUMBER
 } itemtypes;
 
 /**
@@ -54,6 +55,7 @@ struct coordinate
 
 typedef union sprite
 {
+	uint number;
     enum colors color;
     sprite_type sprite;
 } sprite;
@@ -96,6 +98,14 @@ void init_game(games game);
  * @brief Update the game currently running.
  **/
 void update();
+
+/**
+ * @brief Add a number to render next frame.
+ * @param posX the left corner of the number
+ * @param posY the top corner of the number
+ * @param number the number to render
+ **/
+void addNumberUpdate(int posX, int posY, int number);
 
 /**
  * @brief Add a color to render next frame.
