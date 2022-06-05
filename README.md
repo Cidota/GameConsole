@@ -13,4 +13,8 @@ The current version uses the STM32L476RG, a 3.5 inch TFT-LCD and 4 buttons to al
 
 
 
+https://user-images.githubusercontent.com/19935252/172056389-9bf318e3-b5c5-450e-a9d9-85034241f930.mp4
+
+
+
 
