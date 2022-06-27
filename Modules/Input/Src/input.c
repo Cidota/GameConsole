@@ -14,13 +14,15 @@ static bool currentButtonState[NB_BUTTONS];
 static bool bufferedButtonState[NB_BUTTONS];
 static directions bufferedDirection = NO_DIRECTION;
 
-void initInputs() {
+void initInputs()
+{
 	memset(&currentButtonState, 0, sizeof(currentButtonState));
 	memset(&bufferedButtonState, 0, sizeof(bufferedButtonState));
 	bufferedDirection = NO_DIRECTION;
 }
 
-void toggleButton(buttons button) {
+void toggleButton(buttons button)
+{
 	currentButtonState[button] = currentButtonState[button] ? false : true;
 	if (currentButtonState[button])
 		bufferedButtonState[button] = true;
@@ -35,27 +37,31 @@ void toggleButton(buttons button) {
 		bufferedDirection = LEFT;
 }
 
-bool getButtonState(buttons button) {
+bool getButtonState(buttons button)
+{
 	return currentButtonState[button];
 }
 
-bool getBufferedButtonState(buttons button) {
+bool getBufferedButtonState(buttons button)
+{
 	return bufferedButtonState[button];
 }
 
-bool acceptBufferedButtonState(buttons button) {
+bool acceptBufferedButtonState(buttons button)
+{
 	bool tmp = bufferedButtonState[button];
 	bufferedButtonState[button] = false;
 	return tmp;
 }
 
-directions getBufferedDirection() {
+directions getBufferedDirection()
+{
 	return bufferedDirection;
 }
 
-directions acceptBufferedDirction() {
+directions acceptBufferedDirection()
+{
 	directions tmp = bufferedDirection;
 	bufferedDirection = NO_DIRECTION;
 	return tmp;
 }
-

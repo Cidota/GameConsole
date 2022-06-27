@@ -9,6 +9,7 @@
 #define __GAME_ENGINE_H__
 
 #include "snake.h"
+#include "bounce.h"
 #include "input.h"
 #include "log.h"
 #include "image.h"
@@ -30,8 +31,9 @@
  **/
 typedef enum games
 {
-    NONE,      /**< No game */
-    SNAKE_GAME /**< Snake game */
+    NONE,       /**< No game */
+    SNAKE_GAME, /**< Snake game */
+    BOUNCE_GAME /**< Bounce game */
 } games;
 
 /**
@@ -39,9 +41,9 @@ typedef enum games
  */
 typedef enum itemtypes
 {
-    COLOR, 
+    COLOR,
     BITMAP,
-	NUMBER
+    NUMBER
 } itemtypes;
 
 /**
@@ -55,7 +57,7 @@ struct coordinate
 
 typedef union sprite
 {
-	uint number;
+    uint number;
     enum colors color;
     sprite_type sprite;
 } sprite;
@@ -65,10 +67,10 @@ typedef union sprite
  */
 struct item
 {
-    struct coordinate position;   /**< Top left corner of the item. */
-    struct coordinate size;       /**< Size of the item. */
-    sprite item;           /**< Color of the item. */
-    enum itemtypes item_type; /**< Type of item */
+    struct coordinate position; /**< Top left corner of the item. */
+    struct coordinate size;     /**< Size of the item. */
+    sprite item;                /**< Color of the item. */
+    enum itemtypes item_type;   /**< Type of item */
 };
 
 /**
@@ -78,7 +80,7 @@ struct screen_updates
 {
     unsigned int size;         /** Max size available for the items array*/
     unsigned int currentIndex; /** Current position of the item array*/
-    struct item *items;    /** Sprite array */
+    struct item *items;        /** Sprite array */
 };
 
 void setRenderNonGameElementsTrue();
@@ -116,7 +118,6 @@ void addNumberUpdate(int posX, int posY, int number);
  * @param color color of the item.
  **/
 void addColorUpdate(int posX, int posY, int sizeX, int sizeY, colors color);
-
 
 /**
  * @brief Add a sprite to render next frame.

@@ -22,9 +22,9 @@
 
 typedef enum
 {
-    VOID = 0,   /**< Empty square */
-    SNAKE = 1,  /**< Snake in the square */
-    APPLE = 2   /**< Apple in the square */
+    VOID = 0,  /**< Empty square */
+    SNAKE = 1, /**< Snake in the square */
+    APPLE = 2  /**< Apple in the square */
 } case_type;
 
 /**
@@ -33,7 +33,7 @@ typedef enum
  **/
 struct snake_case
 {
-    directions direction; /**< Direction if snake whithin square*/ 
+    directions direction; /**< Direction if snake whithin square*/
     case_type type;       /**< Type of the square*/
 };
 
@@ -59,7 +59,7 @@ void update_snake_game();
  **/
 void reset_snake_game();
 
-//Temporary memory desallocation.
+// Temporary memory desallocation.
 void destroy_snake_game();
 
 /**
