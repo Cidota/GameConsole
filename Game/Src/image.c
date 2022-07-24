@@ -31,15 +31,15 @@ u16* getImage(sprite_type sprite) {
 			for (x = 0, i = snakeTilemap.tiles[c].x; x < 34; x++, i++)
 				snakeTile[(y * 34) + x] = SnakeTilemap[(j * 136) + i];
 
-		return &snakeTile[0];
+		return snakeTile;
 	} else if (sprite == SNAKE_TEXT_SCORE) {
-		return &TextScoreBitmap[0];
+		return (u16 *) TextScoreBitmap;
 	} else if (sprite == SNAKE_TEXT_PAB) {
-		return &TextPressAnyButtonBitmap[0];
+		return (u16 *) TextPressAnyButtonBitmap;
 	} else if (sprite == SNAKE_TEXT_GO) {
-		return &TextGameOverBitmap[0];
+		return (u16 *) TextGameOverBitmap;
 	} else if (sprite == SNAKE_TEXT_HS) {
-		return &TextHiScoreBitmap[0];
+		return (u16 *) TextHiScoreBitmap;
 	} else
 		logError("Sprite image not found : %u", sprite);
 	return NULL;
