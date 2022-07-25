@@ -113,6 +113,7 @@ int main(void)
 
   // Game loop init
   init();
+  initTimers();
   render();
   /* USER CODE END 2 */
 
@@ -127,6 +128,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	updateFrameTime();
     startFrameTime = getTimeMs();
     update();
     render();

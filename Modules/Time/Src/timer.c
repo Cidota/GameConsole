@@ -4,6 +4,8 @@
  * @copyright Cidota. All rights reserved, 2022.
  **/
 
+#include "timer.h"
+
 Timer timerTab[NB_MAX_TIMER];
 u8 nbTimerUsed = 0;
 
@@ -13,7 +15,6 @@ bool isTimerDone(u8 index){
 		logDebug("Error in timer_driver.isTimerDone : index in parameters (%d) must be between 1 and %d.", index, nbTimerUsed);
 		return false;
 	}
-	logDebug("endtick : %d | tickMsCounter : %d\n", timerTab[index].endTick, getTimeMs());
 	return timerTab[index].endTick <= getTimeMs();
 }
 

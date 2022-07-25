@@ -8,10 +8,13 @@
 #include "gameEngine.h"
 
 #define SNAKE_NUMBER_OF_UPDATES_ALLOWED 4
+#define SNAKE_UPDATE_DELTA_TIME 500
 
 struct screen_updates *screen_updates;
 games currentGame = NONE;
 bool renderNonGameElements = true;
+u8 updateFrameTimerIndex;
+
 
 void addNumberUpdate(int posX, int posY, int number){
 	switch(currentGame){
@@ -100,6 +103,7 @@ void init_game(games game) {
 	switch (currentGame) {
 	case SNAKE_GAME:
 		init_snake_game(9, 9);
+		updateFrameTimerIndex = startTimer(SNAKE_UPDATE_DELTA_TIME);
 		break;
 	default:
 		printf("Couldn't initialize any game.\n");
@@ -109,29 +113,15 @@ void init_game(games game) {
 
 }
 
-//temp
-bool getDeltaTime(int t) {
-	static u32 last_ms = 0;
-	u32 now_ms = getTimeMs();
-
-	// Fast exit if time has not changed.
-	if (now_ms == last_ms)
-		return false;
-
-	if (now_ms - last_ms >= t) {
-		last_ms = now_ms;
-		return true;
-	} else {
-		return false;
-	}
-}
-
 void update() {
 	resetSpriteUpdate();
 	switch (currentGame) {
 	case SNAKE_GAME:
-		if (getDeltaTime(500))
+		if (isTimerDone(updateFrameTimerIndex)){
+			resetTimer(updateFrameTimerIndex);
+			updateFrameTimerIndex = startTimer(SNAKE_UPDATE_DELTA_TIME);
 			update_snake_game(screen_updates);
+		}
 		break;
 	default:
 		break;

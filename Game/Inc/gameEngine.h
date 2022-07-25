@@ -14,6 +14,7 @@
 #include "image.h"
 #include "graphics.h"
 #include "time.h"
+#include "timer.h"
 
 #include <stdbool.h>
 #include <stdlib.h>

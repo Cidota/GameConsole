@@ -12,7 +12,7 @@
 #include "time.h"
 #include "log.h"
 #include <stdbool.h>
-
+#include "common.h"
 
 /** @struct Timer
  *  @brief Timer structure
@@ -48,7 +48,7 @@ void resetTimer(u8 index);
 /**
  * @brief Initialize all timers, must be called at the beginning before startTimer.
  **/
-void initTimers();
+void initTimers(void);
 
 /**
  * @brief Gets the number of timers used
